@@ -1,41 +1,224 @@
-{"food": [
-    "tomate",
-    "cebolla",
-    "pimiento",
-    "zanahoria",
-    "lechuga",
-    "pepino",
-    "arroz",
-    "arroz basmati",
-    "pasta",
-    "patata",
-    "tortitas de maiz",
-    "tortitas de trigo",
-    "pan",
-    "pan de molde",
-    "pan de hamburguesa",
-    "pan integral",
-    "pechuga de pollo",
-    "pechuga de pavo",
-    "contramuslo de pollo",
-    "lomo de cerdo",
-    "solomillo de cerdo",
-    "solomillo de ternera",
-    "filete de ternera",
-    "filete de cerdo",
-    "filete de pollo",
-    "filete de pavo",
-    "hamburguesa de ternera",
-    "hamburguesa de pollo",
-    "hamburguesa de pavo",
-    "hamburguesa de cerdo",
-    "huevo",
-    "queso curado",
-    "queso tierno",
-    "queso de cabra",
-    "queso de untar",
-    "yogur natural",
-    "yogur de sabores",
-    "leche semidesnatada",
-    "leche desnatada" 
-]}
+{
+    "food_list": [
+        {
+            "name": "tomate",
+            "category": "vegetales",
+            "subcategory": "hortalizas"
+        },
+        {
+            "name": "cebolla",
+            "category": "vegetales",
+            "subcategory": "hortalizas"
+        },
+        {
+            "name": "pimiento",
+            "category": "vegetales",
+            "subcategory": "hortalizas"
+        },
+        {
+            "name": "zanahoria",
+            "category": "vegetales",
+            "subcategory": "hortalizas"
+        },
+        {
+            "name": "lechuga",
+            "category": "vegetales",
+            "subcategory": "hojas"
+        },
+        {
+            "name": "pepino",
+            "category": "vegetales",
+            "subcategory": "hortalizas"
+        },
+        {
+            "name": "arroz",
+            "category": "cereales",
+            "subcategory": "granos"
+        },
+        {
+            "name": "arroz basmati",
+            "category": "cereales",
+            "subcategory": "granos"
+        },
+        {
+            "name": "pasta",
+            "category": "cereales",
+            "subcategory": "pastas"
+        },
+        {
+            "name": "patata",
+            "category": "vegetales",
+            "subcategory": "tubérculos"
+        },
+        {
+            "name": "tortitas de maiz",
+            "category": "snacks",
+            "subcategory": "tortitas"
+        },
+        {
+            "name": "tortitas de trigo",
+            "category": "snacks",
+            "subcategory": "tortitas"
+        },
+        {
+            "name": "pan",
+            "category": "panadería",
+            "subcategory": "panes"
+        },
+        {
+            "name": "pan de molde",
+            "category": "panadería",
+            "subcategory": "panes"
+        },
+        {
+            "name": "pan de hamburguesa",
+            "category": "panadería",
+            "subcategory": "panes"
+        },
+        {
+            "name": "pan integral",
+            "category": "panadería",
+            "subcategory": "panes"
+        },
+        {
+            "name": "piquitos",
+            "category": "panadería",
+            "subcategory": "panes"
+        },
+        {
+            "name": "pechuga de pollo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "name": "pechuga de pavo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "name": "contramuslo de pollo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "name": "lomo de cerdo",
+            "category": "carnes",
+            "subcategory": "cerdo"
+        },
+        {
+            "name": "solomillo de cerdo",
+            "category": "carnes",
+            "subcategory": "cerdo"
+        },
+        {
+            "name": "solomillo de ternera",
+            "category": "carnes",
+            "subcategory": "ternera"
+        },
+        {
+            "name": "filete de ternera",
+            "category": "carnes",
+            "subcategory": "ternera"
+        },
+        {
+            "name": "filete de cerdo",
+            "category": "carnes",
+            "subcategory": "cerdo"
+        },
+        {
+            "name": "filete de pollo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "name": "filete de pavo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "name": "hamburguesa de ternera",
+            "category": "carnes",
+            "subcategory": "hamburguesas"
+        },
+        {
+            "name": "hamburguesa de pollo",
+            "category": "carnes",
+            "subcategory": "hamburguesas"
+        },
+        {
+            "name": "hamburguesa de pavo",
+            "category": "carnes",
+            "subcategory": "hamburguesas"
+        },
+        {
+            "name": "hamburguesa de cerdo",
+            "category": "carnes",
+            "subcategory": "hamburguesas"
+        },
+        {
+            "name": "huevo",
+            "category": "lácteos",
+            "subcategory": "huevos"
+        },
+        {
+            "name": "queso curado",
+            "category": "lácteos",
+            "subcategory": "quesos"
+        },
+        {
+            "name": "queso tierno",
+            "category": "lácteos",
+            "subcategory": "quesos"
+        },
+        {
+            "name": "queso de cabra",
+            "category": "lácteos",
+            "subcategory": "quesos"
+        },
+        {
+            "name": "queso de untar",
+            "category": "lácteos",
+            "subcategory": "quesos"
+        },
+        {
+            "name": "yogur natural",
+            "category": "lácteos",
+            "subcategory": "yogures"
+        },
+        {
+            "name": "yogur de sabores",
+            "category": "lácteos",
+            "subcategory": "yogures"
+        },
+        {
+            "name": "leche semidesnatada",
+            "category": "lácteos",
+            "subcategory": "leches"
+        },
+        {
+            "name": "leche desnatada",
+            "category": "lácteos",
+            "subcategory": "leches"
+        },
+        {
+            "name": "mayonesa",
+            "category": "salsas",
+            "subcategory": "mayonesas"
+        },
+        {
+            "name": "ketchup",
+            "category": "salsas",
+            "subcategory": "ketchups"
+        },
+        {
+            "name": "mostaza",
+            "category": "salsas",
+            "subcategory": "mostazas"
+        },
+        {
+            "name": "mostaza en grano",
+            "category": "salsas",
+            "subcategory": "mostazas"
+        }
+    ]
+}
