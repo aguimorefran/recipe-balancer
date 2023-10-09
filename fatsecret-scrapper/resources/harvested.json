@@ -1,0 +1,74 @@
+[
+    {
+        "search_term": "pechuga de pollo",
+        "category": "carnes",
+        "subcategory": "aves",
+        "cals": 155.0,
+        "fat": 1.4,
+        "carb": 21.21,
+        "prot": 14.37,
+        "brand": "Carrefour",
+        "name": "Filete de Pechuga de Pollo Empanado",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/filete-de-pechuga-de-pollo-empanado/100g"
+    },
+    {
+        "search_term": "pechuga de pollo",
+        "category": "carnes",
+        "subcategory": "aves",
+        "cals": 113.0,
+        "fat": 1.0,
+        "carb": 0.0,
+        "prot": 26.0,
+        "brand": "Carrefour",
+        "name": "Pechuga de Pollo al Natural",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/pechuga-de-pollo-al-natural/100g"
+    },
+    {
+        "search_term": "pechuga de pollo",
+        "category": "carnes",
+        "subcategory": "aves",
+        "cals": 73.0,
+        "fat": 0.5,
+        "carb": 1.5,
+        "prot": 16.0,
+        "brand": "Carrefour",
+        "name": "Pechuga de Pollo Lonchas Finas",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/pechuga-de-pollo-lonchas-finas/100g"
+    },
+    {
+        "search_term": "filete de ternera",
+        "category": "carnes",
+        "subcategory": "ternera",
+        "cals": 73.0,
+        "fat": 1.4,
+        "carb": 0.0,
+        "prot": 15.1,
+        "brand": "Carrefour",
+        "name": "Filete de Panga",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/filete-de-panga/100g"
+    },
+    {
+        "search_term": "filete de ternera",
+        "category": "carnes",
+        "subcategory": "ternera",
+        "cals": 138.0,
+        "fat": 1.7,
+        "carb": 16.1,
+        "prot": 14.6,
+        "brand": "Carrefour",
+        "name": "Filete Cerdo Empanado",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/filete-cerdo-empanado/100g"
+    },
+    {
+        "search_term": "filete de ternera",
+        "category": "carnes",
+        "subcategory": "ternera",
+        "cals": 94.0,
+        "fat": 3.1,
+        "carb": 0.0,
+        "prot": 16.0,
+        "brand": "Carrefour",
+        "name": "Filete de Merluza Argentina sin Piel",
+        "item_url": "https://fatsecret.es/calor%C3%ADas-nutrici%C3%B3n/carrefour/filete-de-merluza-argentina-sin-piel/100g"
+    }
+]

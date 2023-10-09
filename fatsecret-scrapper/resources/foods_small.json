@@ -1,0 +1,14 @@
+{
+    "food_list": [
+        {
+            "search_term": "pechuga de pollo",
+            "category": "carnes",
+            "subcategory": "aves"
+        },
+        {
+            "search_term": "filete de ternera",
+            "category": "carnes",
+            "subcategory": "ternera"
+        }
+    ]
+}
