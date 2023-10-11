@@ -26,7 +26,8 @@ def __request(url):
     return response
 
 
-def __fetch_item_url(search_term, page, verbose=False):
+def __add_item_url(food_dict, page, verbose=False):
+    search_term = food_dict["search_term"]
     search_base_url = "https://www.fatsecret.es/calorías-nutrición/search?q="
     page_url = "&pg=" + str(page)
     url = search_base_url.strip() + search_term.strip().replace(" ", "+") + page_url
@@ -37,14 +38,13 @@ def __fetch_item_url(search_term, page, verbose=False):
         return None
     soup = BeautifulSoup(response.text, "html.parser")
     food_links = soup.find_all("td", {"class": "borderBottom"})
-    results = [
-        {
-            "search_term": search_term,
-            "item_url": "https://fatsecret.es"
-            + link.find("a", {"class": "prominent"})["href"],
-        }
-        for link in food_links
-    ]
+    results = []
+    for link in food_links:
+        item_dict = food_dict.copy()
+        item_dict["item_url"] = (
+            "https://fatsecret.es" + link.find("a", {"class": "prominent"})["href"]
+        )
+        results.append(item_dict)
     return results
 
 
@@ -119,7 +119,7 @@ def __get_food_info(food_dict, min_results=FOOD_RESULTS, verbose=False):
     page = 0
     search_term = food_dict["search_term"]
     while len(data) < min_results:
-        food_dicts = __fetch_item_url(search_term, page, verbose)
+        food_dicts = __add_item_url(food_dict, page, verbose)
         for food_dict in food_dicts:
             saved_food = food_exists(food_dict["item_url"], verbose)
             if saved_food is not None:
