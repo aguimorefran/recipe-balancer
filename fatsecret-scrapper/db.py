@@ -26,7 +26,10 @@ DB_COLUMNS = [
 ]
 
 
-def init_db():
+def init_db(delete=False):
+    if delete:
+        if os.path.isfile("food.db"):
+            os.remove("food.db")
     if os.path.isfile("food.db"):
         conn = sqlite3.connect("food.db")
         c = conn.cursor()
@@ -67,6 +70,23 @@ def execute_query(query):
         return result
     except Exception as e:
         print(f"Error executing query: {e}")
+        return None
+
+
+def food_exists(item_url, verbose=False):
+    try:
+        if verbose:
+            print(f"Checking if food exists: {item_url}")
+        conn = sqlite3.connect("food.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM food WHERE item_url=?", (item_url,))
+        result = c.fetchone()
+        conn.close()
+        if result:
+            return dict(zip([col[0] for col in DB_COLUMNS], result))
+        return None
+    except Exception as e:
+        print(f"Error checking if food exists: {e}")
         return None
 
 

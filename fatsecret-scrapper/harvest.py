@@ -1,6 +1,7 @@
 import requests
+from tqdm import tqdm
 import time
-from db import init_db, execute_query, insert_food
+from db import init_db, food_exists, insert_food
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 
@@ -11,7 +12,7 @@ FOOD_RESULTS = 3
 init_db()
 
 
-def __request_info(url):
+def __request(url):
     for _ in range(MAX_REQUESTS):
         response = requests.get(url, timeout=60)
         if response.status_code == 429:
@@ -24,48 +25,54 @@ def __request_info(url):
     return response
 
 
-def __get_food_urls(search_term, page=0, verbose=False):
+def __fetch_item_url(search_term, page, verbose=False):
     search_base_url = "https://www.fatsecret.es/calorías-nutrición/search?q="
     page_url = "&pg=" + str(page)
     url = search_base_url.strip() + search_term.strip().replace(" ", "+") + page_url
     if verbose:
         print(f"Searching on {url}")
-    response = __request_info(url)
+    response = __request(url)
     if response is None:
         return None
     soup = BeautifulSoup(response.text, "html.parser")
     food_links = soup.find_all("td", {"class": "borderBottom"})
     results = [
-        (
-            link.find("a", {"class": "prominent"}).text,
-            "https://fatsecret.es" + link.find("a", {"class": "prominent"})["href"],
-        )
+        {
+            "search_term": search_term,
+            "item_url": "https://fatsecret.es"
+            + link.find("a", {"class": "prominent"})["href"],
+        }
         for link in food_links
     ]
-    return tuple(results)
+    return results
 
 
-def __check_100g(food_tuple, verbose=False):
+def __check_100g(food_dict, verbose=False):
     if verbose:
-        print(f"Checking if {food_tuple[0]} is 100g -- {food_tuple[1]}")
-    soup = BeautifulSoup(__request_info(food_tuple[1]).text, "html.parser")
+        print(
+            f"Checking if {food_dict['search_term']} is 100g -- {food_dict['item_url']}"
+        )
+    item_url = food_dict.get("item_url")
+    soup = BeautifulSoup(__request(item_url).text, "html.parser")
     serving_size = soup.find("div", {"class": "serving_size black serving_size_value"})
     return serving_size is not None and serving_size.text == "100 g"
 
 
-def __get_macros(food_tuple, verbose=False):
+def __fetch_macros(food_dict, verbose=False):
     if verbose:
-        print(f"Gathering macros for {food_tuple[0]} -- {food_tuple[1]}")
-    soup = BeautifulSoup(__request_info(food_tuple[1]).text, "html.parser")
+        print(
+            f"Gathering macros for {food_dict['search_term']} -- {food_dict['item_url']}"
+        )
+    soup = BeautifulSoup(__request(food_dict["item_url"]).text, "html.parser")
     macros = soup.find("div", {"class": "factPanel"})
     if macros is None:
-        print(f"No macros found for {food_tuple[0]}")
+        print(f"No macros found for {food_dict['search_term']}")
         return None
     macro_list = [
         macro.text for macro in macros.find_all("div", {"class": "factValue"})
     ]
     if len(macro_list) < 4:
-        print(f"Not enough macros found for {food_tuple[0]}")
+        print(f"Not enough macros found for {food_dict['search_term']}")
         return None
     cals, fat, carb, prot = [
         float(macro.replace("g", "").replace(",", ".")) for macro in macro_list[:4]
@@ -73,12 +80,14 @@ def __get_macros(food_tuple, verbose=False):
     return {"cals": cals, "fat": fat, "carb": carb, "prot": prot}
 
 
-def __get_metadata(food_tuple, verbose=False):
+def __fetch_metadata(food_dict, verbose=False):
     if verbose:
-        print(f"Gathering metadata for {food_tuple[0]} -- {food_tuple[1]}")
-    url = food_tuple[1]
+        print(
+            f"Gathering metadata for {food_dict['search_term']} -- {food_dict['item_url']}"
+        )
+    url = food_dict["item_url"]
     try:
-        response = __request_info(url)
+        response = __request(url)
     except RequestException as e:
         print(f"Error requesting {url}: {e}")
         return None
@@ -108,57 +117,31 @@ def __get_food_info(search_term, min_results=FOOD_RESULTS, verbose=False):
     data = []
     page = 0
     while len(data) < min_results:
-        if verbose:
-            print("Searching for", search_term, "on page", page)
-        tuples = __get_food_urls(search_term, page, verbose)
-
-        existing_urls = execute_query("SELECT item_url FROM food")
-        existing_urls = [url[0] for url in existing_urls]
-
-        tuples_new = [t for t in tuples if t[1] not in existing_urls]
-        if verbose:
-            print("Found", len(tuples_new), "new results for", search_term)
-
-        for t in tuples_new:
-            if __check_100g(t):
-                macros = __get_macros(t, verbose)
-                if macros is not None:
-                    metadata = __get_metadata(t)
-                    data.append({**macros, **metadata, "item_url": t[1]})
-                if len(data) >= min_results:
-                    break
+        food_dicts = __fetch_item_url(search_term, page, verbose)
+        for food_dict in food_dicts:
+            saved_food = food_exists(food_dict["item_url"], verbose)
+            if saved_food is not None:
+                if verbose:
+                    print(f"Found {saved_food['name']} in db")
+                data.append(saved_food)
+            elif __check_100g(food_dict):
+                food_dict.update(__fetch_macros(food_dict, verbose))
+                food_dict.update(__fetch_metadata(food_dict, verbose))
+                insert_food(food_dict, verbose)
+                data.append(food_dict)
         page += 1
     if verbose:
-        print("Found", len(data), "results for", search_term)
+        print(f"Found {len(data)} results for {search_term}")
     return data
 
 
-def harvest(food_list, market_name="", verbose=False):
-    """
-    Harvests food data for a given list of food items and market name.
-
-    Args:
-        food_list (list): A list of food items to harvest data for.
-        market_name (str, optional): The name of the market to search for the food items. Defaults to "".
-        verbose (bool, optional): Whether to print verbose output. Defaults to False.
-
-    Returns:
-        list: A list of harvested food items with additional information.
-    """
-    if verbose:
-        print("Harvesting food data. Number of foods:", len(food_list))
+def harvest(items_to_search, market_name="", verbose=False):
     harvested = []
-    for food_item in food_list:
+    for food in tqdm(items_to_search, disable=verbose):
+        search_term = food["search_term"] + " " + market_name
         if verbose:
-            print("Harvesting", food_item["search_term"])
-        search_term = food_item["search_term"] + " " + market_name
-        food_info = __get_food_info(search_term, verbose=verbose)
-        for info in food_info:
-            new_item = food_item.copy()
-            for key, value in info.items():
-                new_item[key] = value
-            harvested.append(new_item)
-
-            # Insert into database
-            insert_food(new_item, verbose=verbose)
+            print(f"Harvesting {search_term}")
+        new_data = __get_food_info(search_term, verbose=verbose)
+        for new_food in new_data:
+            harvested.append({**food, **new_food})
     return harvested

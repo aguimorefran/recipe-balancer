@@ -3,6 +3,7 @@ import json
 
 """ 
 TODO:
+- Skip already existing foods
 - When searching for the market name, search also without it
  """
 
@@ -13,8 +14,7 @@ with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:
     foods = json.load(f)
 
 food_list = foods.get("food_list")
-harvested = harvest(food_list=food_list, market_name="Carrefour", verbose=True)
-print(json.dumps(harvested, indent=4))
+harvested = harvest(items_to_search=food_list, market_name="", verbose=True)
 
 # save to json
 with open("resources/harvested.json", "w", encoding="utf-8") as f:
