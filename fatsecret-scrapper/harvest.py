@@ -114,9 +114,10 @@ def __fetch_metadata(food_dict, verbose=False):
     return {"brand": brand, "name": name}
 
 
-def __get_food_info(search_term, min_results=FOOD_RESULTS, verbose=False):
+def __get_food_info(food_dict, min_results=FOOD_RESULTS, verbose=False):
     data = []
     page = 0
+    search_term = food_dict["search_term"]
     while len(data) < min_results:
         food_dicts = __fetch_item_url(search_term, page, verbose)
         for food_dict in food_dicts:
@@ -125,24 +126,33 @@ def __get_food_info(search_term, min_results=FOOD_RESULTS, verbose=False):
                 if verbose:
                     print(f"Found {saved_food['name']} in db")
                 data.append(saved_food)
-            elif __check_100g(food_dict):
-                food_dict.update(__fetch_macros(food_dict, verbose))
-                food_dict.update(__fetch_metadata(food_dict, verbose))
-                insert_food(food_dict, verbose)
-                data.append(food_dict)
+                if len(data) >= min_results:
+                    break
+            else:
+                if __check_100g(food_dict):
+                    food_dict.update(__fetch_macros(food_dict, verbose))
+                    food_dict.update(__fetch_metadata(food_dict, verbose))
+                    insert_food(food_dict, verbose)
+                    data.append(food_dict)
+                    if verbose:
+                        print(f"Harvested {len(data)} / {min_results} results")
+                        print("----")
+                    if len(data) >= min_results:
+                        break
         page += 1
     if verbose:
         print(f"Found {len(data)} results for {search_term}")
     return data
 
 
-def harvest(items_to_search, market_name="", verbose=False):
+def harvest(food_list, verbose):
+    if verbose:
+        print("======================= HARVEST =======================")
+
     harvested = []
-    for food in tqdm(items_to_search, disable=verbose):
-        search_term = food["search_term"] + " " + market_name
-        if verbose:
-            print(f"Harvesting {search_term}")
-        new_data = __get_food_info(search_term, verbose=verbose)
-        for new_food in new_data:
-            harvested.append({**food, **new_food})
+    for food in food_list:
+        food_info = __get_food_info(food, verbose=verbose)
+        harvested.append(food_info)
+    if verbose:
+        print("=======================================================")
     return harvested

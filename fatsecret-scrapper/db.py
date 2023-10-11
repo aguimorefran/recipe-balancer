@@ -53,7 +53,10 @@ def init_db(delete=False):
             + ")"
         )
         conn.commit()
-        c.execute("INSERT INTO food VALUES ('test', 100, 10, 20, 30)")
+        c.execute(
+            "INSERT INTO food VALUES (" + ", ".join(["?" for _ in DB_COLUMNS]) + ")",
+            [None for _ in DB_COLUMNS],
+        )
         conn.commit()
     conn.close()
     return True
