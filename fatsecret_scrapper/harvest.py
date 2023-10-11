@@ -80,7 +80,12 @@ def __fetch_macros(food_dict, verbose=False):
     cals, fat, carb, prot = [
         float(macro.replace("g", "").replace(",", ".")) for macro in macro_list[:4]
     ]
-    return {"cals": cals, "fat": fat, "carb": carb, "prot": prot}
+    return {
+        "cals_per_g": cals / 100,
+        "fat_per_g": fat / 100,
+        "carb_per_g": carb / 100,
+        "prot_per_g": prot / 100,
+    }
 
 
 def __fetch_metadata(food_dict, verbose=False):

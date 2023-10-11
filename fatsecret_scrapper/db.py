@@ -2,16 +2,17 @@ import os
 import sqlite3
 
 DB_COLUMNS = [
+    ("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
     ("search_term", "TEXT"),
     ("name", "TEXT"),
     ("category", "TEXT"),
     ("subcategory", "TEXT"),
     ("brand", "TEXT"),
     ("item_url", "TEXT"),
-    ("cals", "REAL"),
-    ("fat", "REAL"),
-    ("carb", "REAL"),
-    ("prot", "REAL"),
+    ("cals_per_g", "REAL"),
+    ("fat_per_g", "REAL"),
+    ("carb_per_g", "REAL"),
+    ("prot_per_g", "REAL"),
 ]
 
 
