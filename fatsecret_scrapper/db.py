@@ -12,17 +12,6 @@ DB_COLUMNS = [
     ("fat", "REAL"),
     ("carb", "REAL"),
     ("prot", "REAL"),
-    ("sugar", "REAL"),
-    ("fiber", "REAL"),
-    ("cholesterol", "REAL"),
-    ("sodium", "REAL"),
-    ("potassium", "REAL"),
-    ("calcium", "REAL"),
-    ("others", "TEXT"),
-    ("serving_size", "REAL"),
-    ("serving_size_unit", "TEXT"),
-    ("serving_size_g", "REAL"),
-    ("serving_size_ml", "REAL"),
 ]
 
 

@@ -1,14 +1,15 @@
 import time
-
+import json
 import requests
 from bs4 import BeautifulSoup
 from db import food_exists, init_db, insert_food
 from requests.exceptions import RequestException
-from tqdm import tqdm
 
 MAX_REQUESTS = 5
 REQUEST_DELAY_SECONDS = 60
 FOOD_RESULTS = 3
+FOODS_JSON_PATH = "resources/foods_small.json"
+
 
 init_db()
 
@@ -17,6 +18,7 @@ def __request(url):
     for _ in range(MAX_REQUESTS):
         response = requests.get(url, timeout=60)
         if response.status_code == 429:
+            print(f"Too many requests, waiting {REQUEST_DELAY_SECONDS} seconds")
             time.sleep(REQUEST_DELAY_SECONDS)
         else:
             break
@@ -111,7 +113,13 @@ def __fetch_metadata(food_dict, verbose=False):
     if name_tag is not None:
         name = name_tag.text
 
-    return {"brand": brand, "name": name}
+    result = {"brand": brand, "name": name}
+
+    if verbose:
+        print("Macros found:")
+        for k, v in result.items():
+            print(f"{k}: {v}")
+    return result
 
 
 def __get_food_info(food_dict, min_results=FOOD_RESULTS, verbose=False):
@@ -145,14 +153,26 @@ def __get_food_info(food_dict, min_results=FOOD_RESULTS, verbose=False):
     return data
 
 
-def harvest(food_list, verbose):
+def harvest(search_list, verbose):
     if verbose:
         print("======================= HARVEST =======================")
 
     harvested = []
-    for food in food_list:
+    total_items = len(search_list)
+    for i, food in enumerate(search_list):
         food_info = __get_food_info(food, verbose=verbose)
         harvested.append(food_info)
+        if verbose:
+            print("-------------------------------------------------------")
+            print(f"Done: {i+1}/{total_items} ({(i+1)/total_items*100:.2f}%)")
+            print("-------------------------------------------------------")
     if verbose:
         print("=======================================================")
     return harvested
+
+
+with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:
+    foods = json.load(f)
+food_list = foods.get("data", [])
+
+f = harvest(food_list, verbose=True)
