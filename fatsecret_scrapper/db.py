@@ -13,6 +13,7 @@ DB_COLUMNS = [
     ("fat_per_g", "REAL"),
     ("carb_per_g", "REAL"),
     ("prot_per_g", "REAL"),
+    ("gram_multiple", "REAL"),
 ]
 
 
