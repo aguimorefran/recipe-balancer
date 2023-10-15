@@ -1,5 +1,7 @@
-from pulp import *
 import sqlite3
+
+from pulp import *
+
 
 def print_rest(prob, kcals_objetive):
     print("=========================================")
@@ -17,7 +19,9 @@ def print_rest(prob, kcals_objetive):
 
         for f, var_value in food_vars_sorted:
             fat_kcals += var_value * food_fats[food_names.index(f)] * KCALS_GRAM_FAT
-            prot_kcals += var_value * food_prots[food_names.index(f)] * KCALS_GRAM_PROTEIN
+            prot_kcals += (
+                var_value * food_prots[food_names.index(f)] * KCALS_GRAM_PROTEIN
+            )
             carb_kcals += var_value * food_carbs[food_names.index(f)] * KCALS_GRAM_CARBS
 
         total_kcals = fat_kcals + prot_kcals + carb_kcals
@@ -25,7 +29,9 @@ def print_rest(prob, kcals_objetive):
         print("=========================================")
         print("Macros:")
         print("=========================================")
-        print("Result protein: {:>10.2f}".format(prot_kcals / KCALS_GRAM_PROTEIN) + " %")
+        print(
+            "Result protein: {:>10.2f}".format(prot_kcals / KCALS_GRAM_PROTEIN) + " %"
+        )
         print("Result fat: {:>14.2f}".format(fat_kcals / KCALS_GRAM_FAT) + " %")
         print("Result carbs: {:>12.2f}".format(carb_kcals / KCALS_GRAM_CARBS) + " %")
         print("=========================================")
@@ -50,14 +56,18 @@ def ask_calories():
             print("Please enter a number")
     return calories
 
+
 def ask_prot_pct():
     while True:
         try:
-            prot_pct = float(input("What percentage of protein do you want as minimum? "))
+            prot_pct = float(
+                input("What percentage of protein do you want as minimum? ")
+            )
             break
         except ValueError:
             print("Please enter a number")
     return prot_pct
+
 
 def ask_fat_pct():
     while True:
@@ -67,6 +77,7 @@ def ask_fat_pct():
         except ValueError:
             print("Please enter a number")
     return fat_pct
+
 
 def ask_params(food_names):
     multipliers = []
@@ -94,7 +105,8 @@ def ask_params(food_names):
                 print("Please enter a number")
     return multipliers, max_grams
 
-####################################################################################################    
+
+####################################################################################################
 
 KCALS_GRAM_FAT = 9
 KCALS_GRAM_CARBS = 4
@@ -109,13 +121,7 @@ PENALTY_FAT = 100
 PENALTY_KCALS = 10
 
 
-food_ids = [
-    9,
-    48,
-    2,
-    53,
-    12
-]
+food_ids = [9, 48, 2, 53, 12]
 
 conn = sqlite3.connect("fatsecret_scrapper/food.db")
 c = conn.cursor()
@@ -134,7 +140,6 @@ food_prots = [f[10] for f in foods]
 
 # Update food_names after replacing spaces with underscores
 food_names = [f.replace(" ", "_") for f in food_names]
-
 
 
 ####################################################################################################
@@ -156,10 +161,15 @@ vars = LpVariable.dicts(
     cat="Integer",
 )
 
-multipliers = LpVariable.dicts("multiplier", food_names, lowBound=1, upBound=MAX_GRAMS, cat="Integer")
+multipliers = LpVariable.dicts(
+    "multiplier", food_names, lowBound=1, upBound=MAX_GRAMS, cat="Integer"
+)
 for f in food_names:
     # prob += vars[f] == 5 * multipliers[f], f"Min grams of {f}"
-    prob += vars[f] == gram_multiplier[food_names.index(f)] * multipliers[f], f"Min grams of {f}"
+    prob += (
+        vars[f] == gram_multiplier[food_names.index(f)] * multipliers[f],
+        f"Min grams of {f}",
+    )
 
 # Slack variables for constraints
 slack_protein = LpVariable("slack_protein", lowBound=0, cat="Continuous")
