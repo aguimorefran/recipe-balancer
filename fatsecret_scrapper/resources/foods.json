@@ -71,6 +71,11 @@
             "search_term": "plátano",
             "category": "frutas",
             "subcategory": "plátano"
+        },
+        {
+            "search_term": "avellanas laminadas",
+            "category": "frutos secos",
+            "subcategory": "avellanas"
         }
     ]
 }

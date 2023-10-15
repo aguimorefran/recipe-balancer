@@ -14,7 +14,7 @@ def print_rest(prob, kcals_objetive):
         prot_kcals = 0
         carb_kcals = 0
 
-        food_vars = [(f, value(vars[f])) for f in food_names]
+        food_vars = [(f, value(prob_vars[f])) for f in food_names]
         food_vars_sorted = sorted(food_vars, key=lambda x: x[1])
 
         for f, var_value in food_vars_sorted:
@@ -105,7 +105,7 @@ PENALTY_FAT = 100
 PENALTY_KCALS = 10
 
 
-food_ids = [9, 48, 2, 53, 12]
+food_ids = [60, 62, 68, 77, 92]
 
 conn = sqlite3.connect("fatsecret_scrapper/food.db")
 c = conn.cursor()
@@ -137,7 +137,7 @@ gram_multiplier, max_grams = ask_params(food_names)
 # Reset problem
 prob = LpProblem("The food problem", LpMinimize)
 
-vars = LpVariable.dicts(
+prob_vars = LpVariable.dicts(
     name="food",
     indices=food_names,
     lowBound=MIN_GRAMS,
@@ -154,7 +154,7 @@ multipliers = LpVariable.dicts(
 )
 
 for f in food_names:
-    var = vars[f]
+    var = prob_vars[f]
     var.upBound = max_grams[food_names.index(f)]
 
 
@@ -165,7 +165,7 @@ slack_kcals = LpVariable("slack_kcals", lowBound=0, cat="Continuous")
 
 # Objective = kcals
 prob += (
-    lpSum([vars[f] * food_cals[i] for i, f in enumerate(food_names)])
+    lpSum([prob_vars[f] * food_cals[i] for i, f in enumerate(food_names)])
     + PENALTY_PROT * slack_protein
     + PENALTY_FAT * slack_fat
     + PENALTY_KCALS * slack_kcals,
@@ -174,14 +174,16 @@ prob += (
 # Constraints = kcals, macros, grams
 # KCALS with slack
 prob += (
-    lpSum([vars[f] * food_cals[i] for i, f in enumerate(food_names)]) + slack_kcals
+    lpSum([prob_vars[f] * food_cals[i] for i, f in enumerate(food_names)]) + slack_kcals
     == kcals_objetive,
     "Max kcals",
 )
 
 # MACROS with slack
 # Protein >= target
-protein_constraint = lpSum([vars[f] * food_prots[i] for i, f in enumerate(food_names)])
+protein_constraint = lpSum(
+    [prob_vars[f] * food_prots[i] for i, f in enumerate(food_names)]
+)
 prob += (
     protein_constraint + slack_protein
     >= prot_pct * kcals_objetive / KCALS_GRAM_PROTEIN,
@@ -189,7 +191,7 @@ prob += (
 )
 
 # Fat <= target
-fat_constraint = lpSum([vars[f] * food_fats[i] for i, f in enumerate(food_names)])
+fat_constraint = lpSum([prob_vars[f] * food_fats[i] for i, f in enumerate(food_names)])
 prob += (
     fat_constraint - slack_fat <= fat_pct * kcals_objetive / KCALS_GRAM_FAT,
     "Max fat",
