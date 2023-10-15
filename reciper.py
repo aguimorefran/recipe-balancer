@@ -80,30 +80,14 @@ def ask_fat_pct():
 
 
 def ask_params(food_names):
-    multipliers = []
+    gram_multiplier = []
     max_grams = []
-    for food in food_names:
-        while True:
-            try:
-                multiplier = float(input(f"What is the multiplier for {food}? "))
-                if multiplier <= 0:
-                    print("Multiplier must be greater than 0")
-                    continue
-                multipliers.append(multiplier)
-                break
-            except ValueError:
-                print("Please enter a number")
-        while True:
-            try:
-                max_gram = float(input(f"What is the maximum grams for {food}? "))
-                if max_gram <= 0:
-                    print("Maximum grams must be greater than 0")
-                    continue
-                max_grams.append(max_gram)
-                break
-            except ValueError:
-                print("Please enter a number")
-    return multipliers, max_grams
+    for f in food_names:
+        multiplier = input(f"How many grams of {f} do you want to eat? ")
+        gram_multiplier.append(int(multiplier))
+        max_gram = input(f"What is the maximum grams of {f} you can eat? ")
+        max_grams.append(int(max_gram))
+    return gram_multiplier, max_grams
 
 
 ####################################################################################################
@@ -157,19 +141,22 @@ vars = LpVariable.dicts(
     name="food",
     indices=food_names,
     lowBound=MIN_GRAMS,
-    upBound=MAX_GRAMS,
+    upBound=max_grams,
     cat="Integer",
 )
 
 multipliers = LpVariable.dicts(
-    "multiplier", food_names, lowBound=1, upBound=MAX_GRAMS, cat="Integer"
+    "multiplier",
+    food_names,
+    lowBound=1,
+    upBound=[max_grams[food_names.index(f)] for f in food_names],
+    cat="Integer",
 )
+
 for f in food_names:
-    # prob += vars[f] == 5 * multipliers[f], f"Min grams of {f}"
-    prob += (
-        vars[f] == gram_multiplier[food_names.index(f)] * multipliers[f],
-        f"Min grams of {f}",
-    )
+    var = vars[f]
+    var.upBound = max_grams[food_names.index(f)]
+
 
 # Slack variables for constraints
 slack_protein = LpVariable("slack_protein", lowBound=0, cat="Continuous")
