@@ -16,10 +16,12 @@ FOODS_JSON_PATH = "resources/foods.json"
 init_db()
 
 
-def __request(url):
+def __request(url, mode=None):
     for _ in range(MAX_REQUESTS):
         response = requests.get(url, timeout=60)
         if response.status_code == 429:
+            if mode == "api":
+                raise Exception("Too many requests")
             print(f"Too many requests, waiting {REQUEST_DELAY_SECONDS} seconds")
             time.sleep(REQUEST_DELAY_SECONDS)
         else:
@@ -30,14 +32,14 @@ def __request(url):
     return response
 
 
-def __add_item_url(food_dict, suf, page, verbose=False):
+def __add_item_url(food_dict, suf, page, verbose=False, mode=None):
     search_term = food_dict["search_term"] + " " + suf
     search_base_url = "https://www.fatsecret.es/calorías-nutrición/search?q="
     page_url = "&pg=" + str(page)
     url = search_base_url.strip() + search_term.strip().replace(" ", "+") + page_url
     if verbose:
         print(f"Searching on:\n{url}\n")
-    response = __request(url)
+    response = __request(url, mode=mode)
     if response is None:
         return None
     soup = BeautifulSoup(response.text, "html.parser")
@@ -52,9 +54,9 @@ def __add_item_url(food_dict, suf, page, verbose=False):
     return results
 
 
-def __check_100g(food_dict, verbose=False):
+def __check_100g(food_dict, verbose=False, mode=None):
     item_url = food_dict.get("item_url")
-    soup = BeautifulSoup(__request(item_url).text, "html.parser")
+    soup = BeautifulSoup(__request(item_url, mode=mode).text, "html.parser")
     serving_size = soup.find("div", {"class": "serving_size black serving_size_value"})
     if verbose:
         print(f"Checking if {food_dict['search_term']} is 100g -- {item_url}")
@@ -66,12 +68,14 @@ def __check_100g(food_dict, verbose=False):
     return serving_size is not None and serving_size.text == "100 g"
 
 
-def __fetch_macros(food_dict, verbose=False):
+def __fetch_macros(food_dict, verbose=False, mode=None):
     if verbose:
         print(
             f"Gathering macros for {food_dict['search_term']} -- {food_dict['item_url']}\n"
         )
-    soup = BeautifulSoup(__request(food_dict["item_url"]).text, "html.parser")
+    soup = BeautifulSoup(
+        __request(food_dict["item_url"], mode=mode).text, "html.parser"
+    )
     macros = soup.find("div", {"class": "factPanel"})
     if macros is None:
         if verbose:
@@ -99,14 +103,14 @@ def __fetch_macros(food_dict, verbose=False):
     return result
 
 
-def __fetch_metadata(food_dict, verbose=False):
+def __fetch_metadata(food_dict, verbose=False, mode=None):
     if verbose:
         print(
             f"Gathering metadata for {food_dict['search_term']} -- {food_dict['item_url']}\n"
         )
     url = food_dict["item_url"]
     try:
-        response = __request(url)
+        response = __request(url, mode=mode)
     except RequestException as e:
         print(f"Error requesting {url}: {e}")
         return None
@@ -139,7 +143,9 @@ def __fetch_metadata(food_dict, verbose=False):
     return result
 
 
-def __get_food_info(food_dict, suffix, min_results=FOOD_RESULTS, verbose=False):
+def __get_food_info(
+    food_dict, suffix, min_results=FOOD_RESULTS, verbose=False, mode=None
+):
     data = []
     page = 0
     if suffix != "":
@@ -147,7 +153,7 @@ def __get_food_info(food_dict, suffix, min_results=FOOD_RESULTS, verbose=False):
     else:
         search_term = food_dict["search_term"]
     while len(data) < min_results:
-        food_dicts = __add_item_url(food_dict, suffix, page, verbose)
+        food_dicts = __add_item_url(food_dict, suffix, page, verbose, mode=mode)
         for food_dict in tqdm(food_dicts, leave=False):
             saved_food = food_exists(food_dict["item_url"], verbose)
             if saved_food is not None:
@@ -157,9 +163,9 @@ def __get_food_info(food_dict, suffix, min_results=FOOD_RESULTS, verbose=False):
                 if len(data) >= min_results:
                     break
             else:
-                if __check_100g(food_dict, verbose):
-                    food_dict.update(__fetch_macros(food_dict, verbose))
-                    food_dict.update(__fetch_metadata(food_dict, verbose))
+                if __check_100g(food_dict, verbose, mode=mode):
+                    food_dict.update(__fetch_macros(food_dict, verbose, mode=mode))
+                    food_dict.update(__fetch_metadata(food_dict, verbose, mode=mode))
                     insert_food(food_dict, verbose)
                     data.append(food_dict)
                     if verbose:
@@ -189,6 +195,17 @@ def harvest(search_list, suffixes, verbose):
                     print(f"Done: {i+1}/{total_items} ({(i+1)/total_items*100:.2f}%)")
                     print("-------------------------------------------------------\n")
     return harvested
+
+
+def harvest_single(food, suffix, verbose, mode):
+    if verbose:
+        print(f"Harvesting {food} {suffix}")
+    result = []
+    food_info = __get_food_info(food, suffix, verbose=verbose, mode=mode)
+    if verbose:
+        print(f"Harvested {len(food_info)} results for {food['search_term']}.")
+    result.append(food_info)
+    return result
 
 
 with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:

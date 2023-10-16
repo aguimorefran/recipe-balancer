@@ -13,8 +13,16 @@ DB_COLUMNS = [
     ("fat_per_g", "REAL"),
     ("carb_per_g", "REAL"),
     ("prot_per_g", "REAL"),
-    ("gram_multiple", "REAL"),
+    ("serving_size", "REAL"),
 ]
+
+
+def drop_table():
+    conn = sqlite3.connect("food.db")
+    c = conn.cursor()
+    c.execute("DROP TABLE food")
+    conn.commit()
+    conn.close()
 
 
 def init_db(delete=False):
