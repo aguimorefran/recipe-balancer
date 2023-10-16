@@ -2,96 +2,6 @@ import sqlite3
 
 from pulp import *
 
-
-def print_rest(prob, kcals_objetive):
-    print("=========================================")
-    print("Status: {:>10}".format(LpStatus[prob.status]))
-    if LpStatus[prob.status] == "Optimal":
-        print("Objective kcals: {:>10.2f}".format(kcals_objetive) + " kcals")
-        print("Target kcals: {:>13.2f}".format(value(prob.objective)) + " kcals")
-
-        fat_kcals = 0
-        prot_kcals = 0
-        carb_kcals = 0
-
-        food_vars = [(f, value(prob_vars[f])) for f in food_names]
-        food_vars_sorted = sorted(food_vars, key=lambda x: x[1])
-
-        for f, var_value in food_vars_sorted:
-            fat_kcals += var_value * food_fats[food_names.index(f)] * KCALS_GRAM_FAT
-            prot_kcals += (
-                var_value * food_prots[food_names.index(f)] * KCALS_GRAM_PROTEIN
-            )
-            carb_kcals += var_value * food_carbs[food_names.index(f)] * KCALS_GRAM_CARBS
-
-        total_kcals = fat_kcals + prot_kcals + carb_kcals
-        print("Result kcals: {:>13.2f}".format(total_kcals) + " kcals")
-        print("=========================================")
-        print("Macros:")
-        print("=========================================")
-        print(
-            "Result protein: {:>10.2f}".format(prot_kcals / KCALS_GRAM_PROTEIN) + " %"
-        )
-        print("Result fat: {:>14.2f}".format(fat_kcals / KCALS_GRAM_FAT) + " %")
-        print("Result carbs: {:>12.2f}".format(carb_kcals / KCALS_GRAM_CARBS) + " %")
-        print("=========================================")
-        print("Foods:")
-        print("=========================================")
-        for f, var_value in food_vars_sorted:
-            print("- {:>10.2f}".format(var_value) + " grams of " + f.replace("_", " "))
-        print("=========================================")
-        print("Slack variables:")
-        print("=========================================")
-        print("Protein: {:>10.2f}".format(value(slack_protein)))
-        print("Fat: {:>14.2f}".format(value(slack_fat)))
-        print("Kcals: {:>12.2f}".format(value(slack_kcals)))
-
-
-def ask_calories():
-    while True:
-        try:
-            calories = int(input("How many calories do you want to eat? "))
-            break
-        except ValueError:
-            print("Please enter a number")
-    return calories
-
-
-def ask_prot_pct():
-    while True:
-        try:
-            prot_pct = float(
-                input("What percentage of protein do you want as minimum? ")
-            )
-            break
-        except ValueError:
-            print("Please enter a number")
-    return prot_pct
-
-
-def ask_fat_pct():
-    while True:
-        try:
-            fat_pct = float(input("What percentage of fat do you want as maximum? "))
-            break
-        except ValueError:
-            print("Please enter a number")
-    return fat_pct
-
-
-def ask_params(food_names):
-    gram_multiplier = []
-    max_grams = []
-    for f in food_names:
-        multiplier = input(f"How many grams of {f} do you want to eat? ")
-        gram_multiplier.append(int(multiplier))
-        max_gram = input(f"What is the maximum grams of {f} you can eat? ")
-        max_grams.append(int(max_gram))
-    return gram_multiplier, max_grams
-
-
-####################################################################################################
-
 KCALS_GRAM_FAT = 9
 KCALS_GRAM_CARBS = 4
 KCALS_GRAM_PROTEIN = 4
@@ -129,10 +39,15 @@ food_names = [f.replace(" ", "_") for f in food_names]
 ####################################################################################################
 
 # Ask for params
-kcals_objetive = ask_calories()
-prot_pct = ask_prot_pct()
-fat_pct = ask_fat_pct()
-gram_multiplier, max_grams = ask_params(food_names)
+# kcals_objetive = ask_calories()
+# prot_pct = ask_prot_pct()
+# fat_pct = ask_fat_pct()
+# gram_multiplier, max_grams = ask_params(food_names)
+kcals_objetive = 2000
+prot_pct = 0.3
+fat_pct = 0.3
+gram_multiplier = [1] * len(food_names)
+max_grams = [MAX_GRAMS] * len(food_names)
 
 # Reset problem
 prob = LpProblem("The food problem", LpMinimize)
@@ -201,4 +116,75 @@ prob += (
 # Solve
 prob.solve()
 
-print_rest(prob, kcals_objetive)
+
+def calculate_results(
+    prob,
+    food_names,
+    food_prots,
+    food_fats,
+    food_carbs,
+    food_cals,
+    KCALS_GRAM_FAT,
+    KCALS_GRAM_CARBS,
+    KCALS_GRAM_PROTEIN,
+):
+    result = []
+    # Print the name of the vars and the value
+    for v in prob.variables():
+        if v.varValue > 0:
+            food = {}
+            print(v.name, "=", v.varValue)
+            name_no_prefix = v.name.replace("food_", "")
+            if "multiplier" in v.name or "slack" in v.name:
+                continue
+            food["name"] = v.name
+            food["grams"] = v.varValue
+            food["protein_per_100g"] = round(
+                food_prots[food_names.index(name_no_prefix)] * 100, 3
+            )
+            food["fat_per_100g"] = round(
+                food_fats[food_names.index(name_no_prefix)] * 100, 3
+            )
+            food["carbs_per_100g"] = round(
+                food_carbs[food_names.index(name_no_prefix)] * 100, 3
+            )
+            food["kcals_per_100g"] = round(
+                food_cals[food_names.index(name_no_prefix)] * 100, 3
+            )
+
+            food["protein"] = round(food["protein_per_100g"] * food["grams"] / 100, 3)
+            food["fat"] = round(food["fat_per_100g"] * food["grams"] / 100, 3)
+            food["carbs"] = round(food["carbs_per_100g"] * food["grams"] / 100, 3)
+            food["kcals"] = round(food["kcals_per_100g"] * food["grams"] / 100, 3)
+            result.append(food)
+
+    # Add the computation of the percentages of each macro by its kcals
+    fat_kcals = sum([f["fat"] for f in result]) * KCALS_GRAM_FAT
+    carbs_kcals = sum([f["carbs"] for f in result]) * KCALS_GRAM_CARBS
+    protein_kcals = sum([f["protein"] for f in result]) * KCALS_GRAM_PROTEIN
+
+    total_kcals_by_macro = fat_kcals + carbs_kcals + protein_kcals
+    total_kcals = sum([f["kcals"] for f in result])
+
+    result.append(
+        {
+            "results": {
+                "fat_kcals": round(fat_kcals, 2),
+                "carbs_kcals": round(carbs_kcals, 2),
+                "protein_kcals": round(protein_kcals, 2),
+                "total_kcals": round(total_kcals, 2),
+                "total_kcals_by_macro": round(total_kcals_by_macro, 2),
+                "fat_pct": round(fat_kcals / total_kcals_by_macro, 2),
+                "carbs_pct": round(carbs_kcals / total_kcals_by_macro, 2),
+                "protein_pct": round(protein_kcals / total_kcals_by_macro, 2),
+            },
+        }
+    )
+
+    return result
+
+
+result = calculate_results()
+
+for f in result:
+    print(json.dumps(f, indent=4, ensure_ascii=False))
