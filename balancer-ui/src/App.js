@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import FoodTable from "./FoodTable";
+import SelectedFoodsTable from "./SelectedFoodsTable";
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [foods, setFoods] = useState([]);
+  const [selectedFoods, setSelectedFoods] = useState([]);
+
+  const handleSelectFood = (foodId) => {
+    console.log(foodId)
+    if (selectedFoods.includes(foodId)) {
+      setSelectedFoods(selectedFoods.filter((id) => id !== foodId));
+    } else {
+      setSelectedFoods([...selectedFoods, foodId]);
+    }
+
+
+  };
+
+  const handleRemoveFood = (foodId) => {
+    setSelectedFoods(selectedFoods.filter((id) => id !== foodId));
+  };
+
+  const handleSearch = () => {
+    fetch(`http://127.0.0.1:8000/search_food?name=${searchTerm}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setFoods(data.foods);
+      })
+      .catch(error => console.error(error));
+  };
+
+  const handleOpenUrl = (url) => {
+    window.open(url, "_blank");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input
+        type="text"
+        placeholder="Search for food"
+        onChange={(event) => setSearchTerm(event.target.value)}
+      />
+      <button onClick={handleSearch}>Search</button>
+      <FoodTable foods={foods} handleOpenUrl={handleOpenUrl} selectedFoods={selectedFoods} handleSelectFood={handleSelectFood} />
+      <SelectedFoodsTable selectedFoods={selectedFoods} onRemoveFood={handleRemoveFood} />
     </div>
   );
-}
+};
 
 export default App;
