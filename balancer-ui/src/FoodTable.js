@@ -1,6 +1,10 @@
 import React from "react";
 
-const FoodTable = ({ foods, handleOpenUrl, selectedFoods, handleSelectFood }) => {
+const FoodTable = ({ foods, selectedFoods, handleSelectFood, handleRemoveFood }) => {
+    const handleOpenUrl = (url) => {
+        window.open(url, "_blank");
+    };
+
     return (
         <table>
             <thead>
@@ -38,11 +42,17 @@ const FoodTable = ({ foods, handleOpenUrl, selectedFoods, handleSelectFood }) =>
                         <td>
                             <button
                                 style={{
-                                    backgroundColor: selectedFoods.includes(food.id) ? "red" : "green",
+                                    backgroundColor: selectedFoods.includes(food.id)
+                                        ? "red"
+                                        : "green",
                                     color: "white",
                                     fontWeight: "bold",
                                 }}
-                                onClick={() => handleSelectFood(food.id)}
+                                onClick={() =>
+                                    selectedFoods.includes(food.id)
+                                        ? handleRemoveFood(food.id)
+                                        : handleSelectFood(food.id)
+                                }
                             >
                                 {selectedFoods.includes(food.id) ? "Remove" : "Select"}
                             </button>

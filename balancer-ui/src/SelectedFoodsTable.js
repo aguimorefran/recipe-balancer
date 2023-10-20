@@ -43,9 +43,7 @@ function SelectedFoodsTable({ selectedFoods, onRemoveFood }) {
                                         color: "white",
                                         fontWeight: "bold",
                                     }}
-                                    onClick={() =>
-                                        onRemoveFood(selectedFoods[index])
-                                    }
+                                    onClick={() => onRemoveFood(selectedFoods[index])}
                                 >
                                     Remove
                                 </button>
