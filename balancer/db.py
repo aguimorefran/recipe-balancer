@@ -115,3 +115,4 @@ def insert_food(food_dict, verbose=False):
         if verbose:
             print(f"Error inserting food with name {food_dict['name']}: {e}")
         return False
+    

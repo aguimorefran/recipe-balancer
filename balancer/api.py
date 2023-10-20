@@ -3,6 +3,7 @@ from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from db import DB_COLUMNS, execute_query
 from balancer import solve_problem as solve
+from harvest import harvest_url as harvest
 
 app = FastAPI()
 
@@ -61,6 +62,24 @@ def get_food(food_id: int):
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Max-Age"] = "86400"
     return {"results": foods}
+
+
+@app.get("/harvest_url")
+def harvest_url(url: str, category: str, subcategory: str):
+    """
+    Harvests a food from the given url.
+    """
+    try:
+        result = harvest(url, category, subcategory, True)
+        response = Response()
+    except Exception as e:
+        response = Response(status_code=500)
+        return {"error": str(e)}
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Max-Age"] = "86400"
+    return {"result": result}
 
 
 @app.get("/solve_problem")

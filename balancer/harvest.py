@@ -208,8 +208,33 @@ def harvest_single(food, suffix, verbose, mode):
     return result
 
 
-with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:
-    foods = json.load(f)
-food_list = foods.get("data", [])
+def harvest_url(url, cat, subcat, verbose):
+    if verbose:
+        print(f"Harvesting from {url}")
+    if food_exists(url, verbose):
+        raise Exception(f"Food {url} already in database.")
+    food_dict = {
+        "item_url": url,
+        "category": cat,
+        "subcategory": subcat,
+        "search_term": "",
+    }
+    food_info = __fetch_metadata(food_dict, verbose)
+    if food_info is None:
+        raise Exception(f"Error fetching metadata for {url}.")
+    food_dict.update(food_info)
+    food_info = __fetch_macros(food_dict, verbose)
+    if food_info is None:
+        raise Exception(f"Error fetching macros for {url}.")
+    food_dict.update(food_info)
+    insert_food(food_dict, verbose)
+    if food_exists(url, verbose) is None:
+        raise Exception(f"Error inserting {url} into database.")
+    return food_exists(url, verbose)
 
-f = harvest(food_list, None, verbose=False)
+
+# with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:
+#     foods = json.load(f)
+# food_list = foods.get("data", [])
+
+# f = harvest(food_list, None, verbose=False)
