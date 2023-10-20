@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import FoodTable from "./FoodTable";
 import SelectedFoodsTable from "./SelectedFoodsTable";
+import AddFoodPage from "./AddFoodPage";
+
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +13,11 @@ function App() {
   const [protPenalty, setProtPenalty] = useState(1000);
   const [fatPenalty, setFatPenalty] = useState(1000);
   const [kcalsPenalty, setKcalsPenalty] = useState(100);
-  const [maxKcals, setMaxKcals] = useState("");
+  const [maxKcals, setMaxKcals] = useState("500");
+  const [showAddFoodPage, setShowAddFoodPage] = useState(false);
+  const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
+
+
 
   const handleSelectFood = (foodId) => {
     setSelectedFoods([...selectedFoods, foodId]);
@@ -31,6 +37,11 @@ function App() {
       .catch(error => console.error(error));
   };
 
+  const handleAddFoodClick = () => {
+    setShowAddFoodPage(!showAddFoodPage);
+    setAddFoodButtonText(showAddFoodPage ? "Add food" : "Hide");
+  };
+
   return (
     <div>
       <input
@@ -39,12 +50,15 @@ function App() {
         onChange={(event) => setSearchTerm(event.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
+      <button onClick={handleAddFoodClick}>{addFoodButtonText}</button> {/* Use the addFoodButtonText state for the button text */}
+      {showAddFoodPage && <AddFoodPage />}
       <FoodTable
         foods={foods}
         selectedFoods={selectedFoods}
         handleSelectFood={handleSelectFood}
         handleRemoveFood={handleRemoveFood}
-      />      <SelectedFoodsTable selectedFoods={selectedFoods} onRemoveFood={handleRemoveFood} />
+      />
+      <SelectedFoodsTable selectedFoods={selectedFoods} onRemoveFood={handleRemoveFood} />
       <div>
         <label htmlFor="maxFatPctg">Max Fat Percentage:</label>
         <input
