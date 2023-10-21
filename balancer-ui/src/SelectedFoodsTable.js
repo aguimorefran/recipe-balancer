@@ -20,7 +20,7 @@ function SelectedFoodsTable({ selectedFoods, onRemoveFood }) {
 
     return (
         <div>
-            <h2>Selected Foods</h2>
+            <h1>Selected Foods</h1>
             <table>
                 <thead>
                     <tr>

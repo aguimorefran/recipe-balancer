@@ -1,5 +1,7 @@
 import os
 import sqlite3
+from unidecode import unidecode
+
 
 DB_COLUMNS = [
     ("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
@@ -99,6 +101,9 @@ def insert_food(food_dict, verbose=False):
         values = []
         for col in DB_COLUMNS:
             if col[0] in food_dict:
+                if isinstance(food_dict[col[0]], str):
+                    # Replace accented vowels with normal vowels
+                    food_dict[col[0]] = unidecode(food_dict[col[0]])
                 values.append(food_dict[col[0]])
             else:
                 values.append(None)
@@ -115,4 +120,3 @@ def insert_food(food_dict, verbose=False):
         if verbose:
             print(f"Error inserting food with name {food_dict['name']}: {e}")
         return False
-    

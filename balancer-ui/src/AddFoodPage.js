@@ -6,6 +6,7 @@ function AddFoodPage() {
     const [subcategory, setSubcategory] = useState("");
     const [food, setFood] = useState(null);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
 
     const handleAddFood = () => {
         const encodedUrl = encodeURIComponent(url);
@@ -20,14 +21,21 @@ function AddFoodPage() {
             })
             .then((data) => {
                 console.log(data);
-                setFood(data.food);
-                setError(null);
+                if (data.error) {
+                    setFood(null);
+                    setError(data.error);
+                    setSuccess(false);
+                } else {
+                    setFood(data.result);
+                    setError(null);
+                    setSuccess(true);
+                }
             })
             .catch((error) => {
                 console.error(error);
                 setFood(null);
-                setError(error.response.data.error);
-                console.log(error.response.data.error);
+                setError(error.message || "An unknown error occurred");
+                setSuccess(false);
             });
     };
 
@@ -64,36 +72,41 @@ function AddFoodPage() {
                     onChange={(event) => setSubcategory(event.target.value)}
                 />
             </div>
-            <button onClick={handleAddFood}>Add food</button>
-            {error && (
-                <p style={{ color: "red" }}>
-                    Error: {error}
-                </p>
+            <button onClick={handleAddFood}>Add Food</button>
+            {error !== null && (
+                <div style={{ backgroundColor: "red", color: "white", padding: "10px", marginTop: "10px" }}>
+                    {error}
+                </div>
             )}
-            {food && (
+            {success && (
+                <div style={{ backgroundColor: "green", color: "white", padding: "10px", marginTop: "10px" }}>
+                    OK
+                </div>
+            )}
+            {food !== null && (
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Brand</th>
                             <th>Category</th>
                             <th>Subcategory</th>
-                            <th>Calories</th>
-                            <th>Protein</th>
-                            <th>Fat</th>
-                            <th>Carbs</th>
+                            <th>Brand</th>
+                            <th>Kcals/g</th>
+                            <th>Fat/g</th>
+                            <th>Carbs/g</th>
+                            <th>Prot/g</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{food.name}</td>
-                            <td>{food.brand}</td>
                             <td>{food.category}</td>
                             <td>{food.subcategory}</td>
-                            <td>{food.calories}</td>
-                            <td>{food.protein}</td>
-                            <td>{food.fat}</td>
-                            <td>{food.carbs}</td>
+                            <td>{food.brand}</td>
+                            <td>{food.cals_per_g.toFixed(2)}</td>
+                            <td>{food.fat_per_g.toFixed(2)}</td>
+                            <td>{food.carb_per_g.toFixed(2)}</td>
+                            <td>{food.prot_per_g.toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
