@@ -3,9 +3,8 @@ import FoodTable from "./FoodTable";
 import SelectedFoodsTable from "./SelectedFoodsTable";
 import AddFoodPage from "./AddFoodPage";
 
-
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [foods, setFoods] = useState([]);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [maxFatPctg, setMaxFatPctg] = useState(0.25);
@@ -16,8 +15,7 @@ function App() {
   const [maxKcals, setMaxKcals] = useState("500");
   const [showAddFoodPage, setShowAddFoodPage] = useState(false);
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
-
-
+  const [selectedFoodsConfig, setSelectedFoodsConfig] = useState({});
 
   const handleSelectFood = (foodId) => {
     setSelectedFoods([...selectedFoods, foodId]);
@@ -29,12 +27,12 @@ function App() {
 
   const handleSearch = () => {
     fetch(`http://127.0.0.1:8000/search_food?name=${searchTerm}`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log(data);
         setFoods(data.foods);
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   };
 
   const handleAddFoodClick = () => {
@@ -50,7 +48,7 @@ function App() {
         onChange={(event) => setSearchTerm(event.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
-      <button onClick={handleAddFoodClick}>{addFoodButtonText}</button> {/* Use the addFoodButtonText state for the button text */}
+      <button onClick={handleAddFoodClick}>{addFoodButtonText}</button>{" "}
       {showAddFoodPage && <AddFoodPage />}
       <FoodTable
         foods={foods}
@@ -58,7 +56,10 @@ function App() {
         handleSelectFood={handleSelectFood}
         handleRemoveFood={handleRemoveFood}
       />
-      <SelectedFoodsTable selectedFoods={selectedFoods} onRemoveFood={handleRemoveFood} />
+      <SelectedFoodsTable
+        selectedFoods={selectedFoods}
+        onRemoveFood={handleRemoveFood}
+      />
       <div>
         <label htmlFor="maxFatPctg">Max Fat Percentage:</label>
         <input
@@ -134,10 +135,9 @@ function App() {
           onChange={(event) => setMaxKcals(event.target.value)}
         />
         <br />
-
       </div>
     </div>
   );
-};
+}
 
 export default App;
