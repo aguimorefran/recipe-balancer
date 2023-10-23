@@ -15,14 +15,19 @@ function App() {
   const [maxKcals, setMaxKcals] = useState("500");
   const [showAddFoodPage, setShowAddFoodPage] = useState(false);
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
-  const [selectedFoodsConfig, setSelectedFoodsConfig] = useState({});
 
-  const handleSelectFood = (foodId) => {
-    setSelectedFoods([...selectedFoods, foodId]);
+  const handleSelectFood = (food) => {
+    console.log("Inserting food into selectedFoods: ", food);
+    if (!selectedFoods.map((food) => food.id).includes(food.id)) {
+      setSelectedFoods([
+        ...selectedFoods,
+        { ...food, max_grams: 0, serving_size: 0 },
+      ]);
+    }
   };
 
   const handleRemoveFood = (foodId) => {
-    setSelectedFoods(selectedFoods.filter((id) => id !== foodId));
+    setSelectedFoods(selectedFoods.filter((food) => food.id !== foodId));
   };
 
   const handleSearch = () => {
@@ -136,6 +141,11 @@ function App() {
         />
         <br />
       </div>
+      <button>
+        <a>
+          <pre>{JSON.stringify(selectedFoods, null, 2)}</pre>
+        </a>
+      </button>
     </div>
   );
 }

@@ -5,54 +5,45 @@ function SelectedFoodsTable({ selectedFoods, onRemoveFood }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const promises = selectedFoods.map((foodId) =>
-        fetch(`http://127.0.0.1:8000/food?food_id=${foodId}`, {
-          headers: {
-            accept: "application/json",
-          },
-        }).then((response) => response.json())
-      );
-      const foods = await Promise.all(promises);
-      setFoodsData(foods.map((food) => food.results[0]));
+      const foods = selectedFoods.map((food) => food);
+      setFoodsData(foods);
     };
     fetchData();
   }, [selectedFoods]);
 
   return (
-    <div>
-      <h1>Selected Foods</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Brand</th>
-            <th>Actions</th>
+    <table>
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Name</th>
+          <th>Cat</th>
+          <th>Subcat</th>
+          <th>Kcals/g</th>
+          <th>Carbs/g</th>
+          <th>Fat/g</th>
+          <th>Prot/g</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foodsData.map((food) => (
+          <tr key={food.id}>
+            <td>{food.brand}</td>
+            <td>{food.name}</td>
+            <td>{food.category}</td>
+            <td>{food.subcategory}</td>
+            <td>{food.cals_per_g}</td>
+            <td>{food.carb_per_g}</td>
+            <td>{food.fat_per_g}</td>
+            <td>{food.prot_per_g}</td>
+            <td>
+              <button onClick={() => onRemoveFood(food.id)}>Remove</button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {foodsData.map((food, index) => (
-            <tr key={selectedFoods[index]}>
-              <td>{selectedFoods[index]}</td>
-              <td>{food.name}</td>
-              <td>{food.brand}</td>
-              <td>
-                <button
-                  style={{
-                    backgroundColor: "red",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                  onClick={() => onRemoveFood(selectedFoods[index])}
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
