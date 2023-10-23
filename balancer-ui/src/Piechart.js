@@ -19,8 +19,8 @@ function PieChart({ data }) {
     <Plot
       data={pieChartData}
       layout={{
-        width: 400,
-        height: 400,
+        width: 300,
+        height: 300,
         title: title,
       }}
     />

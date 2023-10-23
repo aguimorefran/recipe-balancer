@@ -74,18 +74,32 @@ function App() {
         onUpdateSelectedFoods={handleUpdateSelectedFoods}
       />
       <div>
-        <Sliders
-          minPrtoPctg={minPrtoPctg}
-          maxFatPctg={maxFatPctg}
-          protPenalty={protPenalty}
-          fatPenalty={fatPenalty}
-          kcalsPenalty={kcalsPenalty}
-          setMinPrtoPctg={setMinPrtoPctg}
-          setMaxFatPctg={setMaxFatPctg}
-          setProtPenalty={setProtPenalty}
-          setFatPenalty={setFatPenalty}
-          setKcalsPenalty={setKcalsPenalty}
-        />
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ flex: 1 }}>
+            <Sliders
+              minPrtoPctg={minPrtoPctg}
+              maxFatPctg={maxFatPctg}
+              protPenalty={protPenalty}
+              fatPenalty={fatPenalty}
+              kcalsPenalty={kcalsPenalty}
+              setMinPrtoPctg={setMinPrtoPctg}
+              setMaxFatPctg={setMaxFatPctg}
+              setProtPenalty={setProtPenalty}
+              setFatPenalty={setFatPenalty}
+              setKcalsPenalty={setKcalsPenalty}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <PieChart
+              data={{
+                title: "Target macros",
+                labels: ["Carbs", "Protein", "Fat"],
+                values: [1 - maxFatPctg - minPrtoPctg, minPrtoPctg, maxFatPctg],
+                colors: ["#E7ECEF", "#63B3ED", "#F6AD55"],
+              }}
+            />
+          </div>
+        </div>
       </div>
       <div>
         <Solver
@@ -97,16 +111,6 @@ function App() {
           fatPenalty={fatPenalty}
           kcalsPenalty={kcalsPenalty}
           onUpdateSelectedFoods={handleUpdateSelectedFoods}
-        />
-      </div>
-      <div>
-        <PieChart
-          data={{
-            title: "Target macros",
-            labels: ["Carbs", "Protein", "Fat"],
-            values: [1 - maxFatPctg - minPrtoPctg, minPrtoPctg, maxFatPctg],
-            colors: ["#E7ECEF", "#63B3ED", "#F6AD55"],
-          }}
         />
       </div>
     </div>

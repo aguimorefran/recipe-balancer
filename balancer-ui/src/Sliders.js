@@ -16,6 +16,7 @@ function Sliders(props) {
 
   return (
     <div>
+      <h1>Balance configuration</h1>
       <div>
         <label htmlFor="minPrtoPctg">Minimum protein percentage:</label>
         <input
@@ -26,7 +27,15 @@ function Sliders(props) {
           max="1"
           step="0.05"
           value={minPrtoPctg}
-          onChange={(event) => setMinPrtoPctg(event.target.value)}
+          onChange={(event) => {
+            const newMinPrtoPctg = event.target.value;
+            const newMaxFatPctg = Math.min(
+              maxFatPctg,
+              1 - newMinPrtoPctg
+            ).toFixed(2);
+            setMinPrtoPctg(newMinPrtoPctg);
+            setMaxFatPctg(newMaxFatPctg);
+          }}
         />
         <span>{minPrtoPctg}%</span>
       </div>
@@ -37,10 +46,18 @@ function Sliders(props) {
           id="maxFatPctg"
           name="maxFatPctg"
           min="0"
-          max="1"
+          max={1 - minPrtoPctg}
           step="0.05"
           value={maxFatPctg}
-          onChange={(event) => setMaxFatPctg(event.target.value)}
+          onChange={(event) => {
+            const newMaxFatPctg = event.target.value;
+            const newMinPrtoPctg = Math.min(
+              minPrtoPctg,
+              1 - newMaxFatPctg
+            ).toFixed(2);
+            setMaxFatPctg(newMaxFatPctg);
+            setMinPrtoPctg(newMinPrtoPctg);
+          }}
         />
         <span>{maxFatPctg}%</span>
       </div>
