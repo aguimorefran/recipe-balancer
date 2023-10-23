@@ -35,42 +35,48 @@ function SelectedFoodsTable({
   };
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Max Grams</th>
-          <th>Serving Size</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody>
-        {selectedFoods.map((food) => (
-          <tr key={food.id}>
-            <td>{food.name}</td>
-            <td>
-              <input
-                type="number"
-                value={food.max_grams}
-                onChange={(e) => handleMaxGramsChange(food.id, e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={food.serving_size}
-                onChange={(e) =>
-                  handleServingSizeChange(food.id, e.target.value)
-                }
-              />
-            </td>
-            <td>
-              <button onClick={() => onRemoveFood(food.id)}>Remove</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      {selectedFoods.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Max Grams</th>
+              <th>Serving Size</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedFoods.map((food) => (
+              <tr key={food.id}>
+                <td>{food.name}</td>
+                <td>
+                  <input
+                    type="number"
+                    value={food.max_grams}
+                    onChange={(e) =>
+                      handleMaxGramsChange(food.id, e.target.value)
+                    }
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={food.serving_size}
+                    onChange={(e) =>
+                      handleServingSizeChange(food.id, e.target.value)
+                    }
+                  />
+                </td>
+                <td>
+                  <button onClick={() => onRemoveFood(food.id)}>Remove</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
   );
 }
 
