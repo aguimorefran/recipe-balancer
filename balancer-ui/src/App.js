@@ -146,11 +146,6 @@ function App() {
         />
         <br />
       </div>
-      <button>
-        <a>
-          <pre>{JSON.stringify(selectedFoods, null, 2)}</pre>
-        </a>
-      </button>
     </div>
   );
 }
