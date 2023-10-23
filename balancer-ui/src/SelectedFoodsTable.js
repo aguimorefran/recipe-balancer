@@ -6,7 +6,6 @@ function SelectedFoodsTable({
   onUpdateSelectedFoods,
 }) {
   const [foodsData, setFoodsData] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       const foods = selectedFoods.map((food) => food);

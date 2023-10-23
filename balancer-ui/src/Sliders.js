@@ -1,0 +1,93 @@
+import React from "react";
+
+function Sliders(props) {
+  const {
+    minPrtoPctg,
+    maxFatPctg,
+    protPenalty,
+    fatPenalty,
+    kcalsPenalty,
+    setMinPrtoPctg,
+    setMaxFatPctg,
+    setProtPenalty,
+    setFatPenalty,
+    setKcalsPenalty,
+  } = props;
+
+  return (
+    <div>
+      <div>
+        <label htmlFor="minPrtoPctg">Minimum protein percentage:</label>
+        <input
+          type="range"
+          id="minPrtoPctg"
+          name="minPrtoPctg"
+          min="0"
+          max="1"
+          step="0.05"
+          value={minPrtoPctg}
+          onChange={(event) => setMinPrtoPctg(event.target.value)}
+        />
+        <span>{minPrtoPctg}%</span>
+      </div>
+      <div>
+        <label htmlFor="maxFatPctg">Maximum fat percentage:</label>
+        <input
+          type="range"
+          id="maxFatPctg"
+          name="maxFatPctg"
+          min="0"
+          max="1"
+          step="0.05"
+          value={maxFatPctg}
+          onChange={(event) => setMaxFatPctg(event.target.value)}
+        />
+        <span>{maxFatPctg}%</span>
+      </div>
+      <div>
+        <label htmlFor="protPenalty">Protein penalty:</label>
+        <input
+          type="range"
+          id="protPenalty"
+          name="protPenalty"
+          min="0"
+          max="10"
+          step="1"
+          value={protPenalty}
+          onChange={(event) => setProtPenalty(event.target.value)}
+        />
+        <span>{protPenalty}</span>
+      </div>
+      <div>
+        <label htmlFor="fatPenalty">Fat penalty:</label>
+        <input
+          type="range"
+          id="fatPenalty"
+          name="fatPenalty"
+          min="0"
+          max="10"
+          step="1"
+          value={fatPenalty}
+          onChange={(event) => setFatPenalty(event.target.value)}
+        />
+        <span>{fatPenalty}</span>
+      </div>
+      <div>
+        <label htmlFor="kcalsPenalty">Calories penalty:</label>
+        <input
+          type="range"
+          id="kcalsPenalty"
+          name="kcalsPenalty"
+          min="0"
+          max="200"
+          step="10"
+          value={kcalsPenalty}
+          onChange={(event) => setKcalsPenalty(event.target.value)}
+        />
+        <span>{kcalsPenalty}</span>
+      </div>
+    </div>
+  );
+}
+
+export default Sliders;

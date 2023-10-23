@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import FoodTable from "./FoodTable";
 import SelectedFoodsTable from "./SelectedFoodsTable";
 import AddFoodPage from "./AddFoodPage";
+import Solver from "./Solver";
+import PieChart from "./Piechart";
+import Sliders from "./Sliders";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,80 +74,40 @@ function App() {
         onUpdateSelectedFoods={handleUpdateSelectedFoods}
       />
       <div>
-        <label htmlFor="maxFatPctg">Max Fat Percentage:</label>
-        <input
-          type="range"
-          id="maxFatPctg"
-          name="maxFatPctg"
-          min="0"
-          max="1"
-          step="0.05"
-          value={maxFatPctg}
-          onChange={(event) => setMaxFatPctg(event.target.value)}
+        <Sliders
+          minPrtoPctg={minPrtoPctg}
+          maxFatPctg={maxFatPctg}
+          protPenalty={protPenalty}
+          fatPenalty={fatPenalty}
+          kcalsPenalty={kcalsPenalty}
+          setMinPrtoPctg={setMinPrtoPctg}
+          setMaxFatPctg={setMaxFatPctg}
+          setProtPenalty={setProtPenalty}
+          setFatPenalty={setFatPenalty}
+          setKcalsPenalty={setKcalsPenalty}
         />
-        <span>{parseInt(maxFatPctg * 100)}%</span>
-        <br />
-        <label htmlFor="minPrtoPctg">Min Protein Percentage:</label>
-        <input
-          type="range"
-          id="minPrtoPctg"
-          name="minPrtoPctg"
-          min="0"
-          max="1"
-          step="0.05"
-          value={minPrtoPctg}
-          onChange={(event) => setMinPrtoPctg(event.target.value)}
+      </div>
+      <div>
+        <Solver
+          selectedFoods={selectedFoods}
+          maxKcals={maxKcals}
+          maxFatPctg={maxFatPctg}
+          minPrtoPctg={minPrtoPctg}
+          protPenalty={protPenalty}
+          fatPenalty={fatPenalty}
+          kcalsPenalty={kcalsPenalty}
+          onUpdateSelectedFoods={handleUpdateSelectedFoods}
         />
-        <span>{parseInt(minPrtoPctg * 100)}%</span>
-        <br />
-        <label htmlFor="protPenalty">Protein Penalty:</label>
-        <input
-          type="range"
-          id="protPenalty"
-          name="protPenalty"
-          min="0"
-          max="2000"
-          step="100"
-          value={protPenalty}
-          onChange={(event) => setProtPenalty(event.target.value)}
+      </div>
+      <div>
+        <PieChart
+          data={{
+            title: "Target macros",
+            labels: ["Carbs", "Protein", "Fat"],
+            values: [1 - maxFatPctg - minPrtoPctg, minPrtoPctg, maxFatPctg],
+            colors: ["#E7ECEF", "#63B3ED", "#F6AD55"],
+          }}
         />
-        <span>{protPenalty}</span>
-        <br />
-        <label htmlFor="fatPenalty">Fat Penalty:</label>
-        <input
-          type="range"
-          id="fatPenalty"
-          name="fatPenalty"
-          min="0"
-          max="2000"
-          step="100"
-          value={fatPenalty}
-          onChange={(event) => setFatPenalty(event.target.value)}
-        />
-        <span>{fatPenalty}</span>
-        <br />
-        <label htmlFor="kcalsPenalty">Kcals Penalty:</label>
-        <input
-          type="range"
-          id="kcalsPenalty"
-          name="kcalsPenalty"
-          min="0"
-          max="200"
-          step="10"
-          value={kcalsPenalty}
-          onChange={(event) => setKcalsPenalty(event.target.value)}
-        />
-        <span>{kcalsPenalty}</span>
-        <br />
-        <label htmlFor="maxKcals">Max Kcals:</label>
-        <input
-          type="text"
-          id="maxKcals"
-          name="maxKcals"
-          value={maxKcals}
-          onChange={(event) => setMaxKcals(event.target.value)}
-        />
-        <br />
       </div>
     </div>
   );
