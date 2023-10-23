@@ -36,7 +36,7 @@ const FoodTable = ({
               <td>{food.name}</td>
               <td>{food.category}</td>
               <td>{food.subcategory}</td>
-              <td>{food.brand}</td>
+              <td>{food.brand === "Ver Más" ? "No brand" : food.brand}</td>
               <td>
                 <button onClick={() => handleOpenUrl(food.item_url)}>
                   {"Open URL"}

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-function SelectedFoodsTable({ selectedFoods, onRemoveFood }) {
+function SelectedFoodsTable({
+  selectedFoods,
+  onRemoveFood,
+  onUpdateSelectedFoods,
+}) {
   const [foodsData, setFoodsData] = useState([]);
 
   useEffect(() => {
@@ -11,32 +15,56 @@ function SelectedFoodsTable({ selectedFoods, onRemoveFood }) {
     fetchData();
   }, [selectedFoods]);
 
+  const handleMaxGramsChange = (foodId, maxGrams) => {
+    const updatedSelectedFoods = selectedFoods.map((food) => {
+      if (food.id === foodId) {
+        return { ...food, max_grams: maxGrams };
+      }
+      return food;
+    });
+    onUpdateSelectedFoods(updatedSelectedFoods);
+  };
+
+  const handleServingSizeChange = (foodId, servingSize) => {
+    const updatedSelectedFoods = selectedFoods.map((food) => {
+      if (food.id === foodId) {
+        return { ...food, serving_size: servingSize };
+      }
+      return food;
+    });
+    onUpdateSelectedFoods(updatedSelectedFoods);
+  };
+
   return (
     <table>
       <thead>
         <tr>
-          <th>Brand</th>
           <th>Name</th>
-          <th>Cat</th>
-          <th>Subcat</th>
-          <th>Kcals/g</th>
-          <th>Carbs/g</th>
-          <th>Fat/g</th>
-          <th>Prot/g</th>
+          <th>Max Grams</th>
+          <th>Serving Size</th>
           <th>Remove</th>
         </tr>
       </thead>
       <tbody>
-        {foodsData.map((food) => (
+        {selectedFoods.map((food) => (
           <tr key={food.id}>
-            <td>{food.brand}</td>
             <td>{food.name}</td>
-            <td>{food.category}</td>
-            <td>{food.subcategory}</td>
-            <td>{food.cals_per_g}</td>
-            <td>{food.carb_per_g}</td>
-            <td>{food.fat_per_g}</td>
-            <td>{food.prot_per_g}</td>
+            <td>
+              <input
+                type="number"
+                value={food.max_grams}
+                onChange={(e) => handleMaxGramsChange(food.id, e.target.value)}
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                value={food.serving_size}
+                onChange={(e) =>
+                  handleServingSizeChange(food.id, e.target.value)
+                }
+              />
+            </td>
             <td>
               <button onClick={() => onRemoveFood(food.id)}>Remove</button>
             </td>

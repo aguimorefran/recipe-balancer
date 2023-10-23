@@ -45,6 +45,10 @@ function App() {
     setAddFoodButtonText(showAddFoodPage ? "Add food" : "Hide");
   };
 
+  const handleUpdateSelectedFoods = (updatedSelectedFoods) => {
+    setSelectedFoods(updatedSelectedFoods);
+  };
+
   return (
     <div>
       <input
@@ -64,6 +68,7 @@ function App() {
       <SelectedFoodsTable
         selectedFoods={selectedFoods}
         onRemoveFood={handleRemoveFood}
+        onUpdateSelectedFoods={handleUpdateSelectedFoods}
       />
       <div>
         <label htmlFor="maxFatPctg">Max Fat Percentage:</label>
