@@ -14,10 +14,10 @@ function SelectedFoodsTable({
     fetchData();
   }, [selectedFoods]);
 
-  const handleMaxGramsChange = (foodId, maxGrams) => {
+  const handleMaxGramsChange = (foodId, maxServings) => {
     const updatedSelectedFoods = selectedFoods.map((food) => {
       if (food.id === foodId) {
-        return { ...food, max_grams: maxGrams };
+        return { ...food, max_servings: parseInt(maxServings, 10) };
       }
       return food;
     });
@@ -27,7 +27,7 @@ function SelectedFoodsTable({
   const handleServingSizeChange = (foodId, servingSize) => {
     const updatedSelectedFoods = selectedFoods.map((food) => {
       if (food.id === foodId) {
-        return { ...food, serving_size: servingSize };
+        return { ...food, serving_size: parseInt(servingSize, 10) };
       }
       return food;
     });
@@ -41,8 +41,8 @@ function SelectedFoodsTable({
           <thead>
             <tr>
               <th>Name</th>
-              <th>Max Grams</th>
               <th>Serving Size</th>
+              <th>Max servings</th>
               <th>Remove</th>
             </tr>
           </thead>
@@ -53,21 +53,22 @@ function SelectedFoodsTable({
                 <td>
                   <input
                     type="number"
-                    value={food.max_grams}
-                    onChange={(e) =>
-                      handleMaxGramsChange(food.id, e.target.value)
-                    }
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
                     value={food.serving_size}
                     onChange={(e) =>
                       handleServingSizeChange(food.id, e.target.value)
                     }
                   />
                 </td>
+                <td>
+                  <input
+                    type="number"
+                    value={food.max_servings}
+                    onChange={(e) =>
+                      handleMaxGramsChange(food.id, e.target.value)
+                    }
+                  />
+                </td>
+
                 <td>
                   <button onClick={() => onRemoveFood(food.id)}>Remove</button>
                 </td>

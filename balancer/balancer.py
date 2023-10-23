@@ -7,14 +7,62 @@ KCALS_GRAM_CARBS = 4
 KCALS_GRAM_PROTEIN = 4
 
 MIN_GRAMS = 5
-MAX_GRAMS = 200
+MAX_GRAMS = 2000
 
 
-def parse_result(prob):
+def parse_result(prob, foods):
     result = {}
+
+    result["target_kcals"] = round(prob.objective.value(), 2)
+    result["problem_status"] = LpStatus[prob.status]
+
+    food_names = [f["name"] for f in foods]
+    food_cals = [f["cals_per_g"] for f in foods]
+    food_fats = [f["fat_per_g"] for f in foods]
+    food_carbs = [f["carb_per_g"] for f in foods]
+    food_prots = [f["prot_per_g"] for f in foods]
+
+    fat_kcals = 0
+    carb_kcals = 0
+    protein_kcals = 0
+
+    food_results = []
+
     for v in prob.variables():
-        if v.varValue > 0:
-            result[v.name] = v.varValue
+        if "slack" in v.name:
+            result[v.name] = round(v.varValue, 2)
+        if "food" in v.name:
+            food_name = v.name[5:].replace("_", " ")
+            food_idx = food_names.index(food_name)
+            food_results.append(
+                {
+                    "name": food_name,
+                    "grams": round(v.varValue, 2),
+                    "cals": round(v.varValue * food_cals[food_idx], 2),
+                    "fat_grams": round(v.varValue * food_fats[food_idx], 2),
+                    "carb_grams": round(v.varValue * food_carbs[food_idx], 2),
+                    "protein_grams": round(v.varValue * food_prots[food_idx], 2),
+                    "fat_kcals": round(
+                        v.varValue * food_fats[food_idx] * KCALS_GRAM_FAT, 2
+                    ),
+                    "carb_kcals": round(
+                        v.varValue * food_carbs[food_idx] * KCALS_GRAM_CARBS, 2
+                    ),
+                    "protein_kcals": round(
+                        v.varValue * food_prots[food_idx] * KCALS_GRAM_PROTEIN, 2
+                    ),
+                }
+            )
+            fat_kcals += v.varValue * food_fats[food_idx] * KCALS_GRAM_FAT
+            carb_kcals += v.varValue * food_carbs[food_idx] * KCALS_GRAM_CARBS
+            protein_kcals += v.varValue * food_prots[food_idx] * KCALS_GRAM_PROTEIN
+    total_kcals = fat_kcals + carb_kcals + protein_kcals
+    result["fat_kcal_pctg"] = fat_kcals / total_kcals
+    result["carb_kcal_pctg"] = carb_kcals / total_kcals
+    result["protein_kcal_pctg"] = protein_kcals / total_kcals
+
+    result["food_results"] = food_results
+
     return result
 
 
@@ -57,7 +105,7 @@ def solve_problem(params):
         indices=food_names,
         lowBound=0,
         upBound=None,
-        cat="Continuous",
+        cat="Integer",
     )
 
     for f in food_names:
@@ -107,9 +155,15 @@ def solve_problem(params):
         "Max fat",
     )
 
+    for f in food_names:
+        prob += (
+            prob_vars[f] <= multipliers[f] * max_grams[food_names.index(f)],
+            f"Maximum {f} grams",
+        )
+
     # Solve
     prob.solve()
 
-    result = parse_result(prob)
+    result = parse_result(prob, foods)
 
     return result

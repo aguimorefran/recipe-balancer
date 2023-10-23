@@ -1,9 +1,10 @@
-from typing import List
+from typing import List, Dict
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from db import DB_COLUMNS, execute_query
 from balancer import solve_problem as solve
 from harvest import harvest_url as harvest
+import json
 
 app = FastAPI()
 
@@ -22,6 +23,8 @@ def search_food(name: str = None):
     Searches for foods in the database that match the given name or brand.
     If name is None, returns all the foods in the database.
     """
+    if name == "":
+        return {"foods": []}
     if name is None:
         fetched_foods = execute_query("SELECT * FROM food")
     else:
@@ -82,33 +85,32 @@ def harvest_url(url: str, category: str, subcategory: str):
     return {"result": result}
 
 
-@app.get("/solve_problem")
-def solve_problem(
-    target_kcals: float,
-    max_fat_pct: float,
-    min_prot_pct: float,
-    penalty_protein: float,
-    penalty_fat: float,
-    penalty_kcals: float,
-    foods: List[dict],
-):
-    """
-    Calls the solve_problem function to solve a problem.
-    """
-    result = solve(
-        {
-            "target_kcals": target_kcals,
-            "max_fat_pct": max_fat_pct,
-            "min_prot_pct": min_prot_pct,
-            "foods": foods,
-            "penalty_protein": penalty_protein,
-            "penalty_fat": penalty_fat,
-            "penalty_kcals": penalty_kcals,
-        }
-    )
-    response = Response()
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Max-Age"] = "86400"
+@app.post("/solve_problem")
+async def solve_problem(data: dict):
+    print(json.dumps(data, indent=4))
+    target_kcals = data["target_kcals"]
+    max_fat_pct = data["max_fat_pct"]
+    min_prot_pct = data["min_prot_pct"]
+    penalty_protein = data["penalty_protein"]
+    penalty_fat = data["penalty_fat"]
+    penalty_kcals = data["penalty_kcals"]
+    foods = data["foods"]
+
+    try:
+        result = solve(
+            {
+                "target_kcals": target_kcals,
+                "max_fat_pct": max_fat_pct,
+                "min_prot_pct": min_prot_pct,
+                "foods": foods,
+                "penalty_protein": penalty_protein,
+                "penalty_fat": penalty_fat,
+                "penalty_kcals": penalty_kcals,
+            }
+        )
+
+    except Exception as e:
+        response = Response(status_code=500)
+        return {"error": str(e)}
+
     return {"result": result}

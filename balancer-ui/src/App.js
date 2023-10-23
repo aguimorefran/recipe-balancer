@@ -12,10 +12,10 @@ function App() {
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [maxFatPctg, setMaxFatPctg] = useState(0.25);
   const [minPrtoPctg, setMinPrtoPctg] = useState(0.4);
-  const [protPenalty, setProtPenalty] = useState(1000);
-  const [fatPenalty, setFatPenalty] = useState(1000);
+  const [protPenalty, setProtPenalty] = useState(2500);
+  const [fatPenalty, setFatPenalty] = useState(2500);
   const [kcalsPenalty, setKcalsPenalty] = useState(100);
-  const [maxKcals, setMaxKcals] = useState("500");
+  const [maxKcals, setMaxKcals] = useState(500);
   const [showAddFoodPage, setShowAddFoodPage] = useState(false);
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
 
@@ -24,7 +24,7 @@ function App() {
     if (!selectedFoods.map((food) => food.id).includes(food.id)) {
       setSelectedFoods([
         ...selectedFoods,
-        { ...food, max_grams: 0, serving_size: 0 },
+        { ...food, max_servings: 0, serving_size: 0 },
       ]);
     }
   };
@@ -87,6 +87,8 @@ function App() {
               setProtPenalty={setProtPenalty}
               setFatPenalty={setFatPenalty}
               setKcalsPenalty={setKcalsPenalty}
+              maxKcals={maxKcals}
+              setMaxKcals={setMaxKcals}
             />
           </div>
           <div style={{ flex: 1 }}>

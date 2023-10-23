@@ -7,11 +7,13 @@ function Sliders(props) {
     protPenalty,
     fatPenalty,
     kcalsPenalty,
+    maxKcals,
     setMinPrtoPctg,
     setMaxFatPctg,
     setProtPenalty,
     setFatPenalty,
     setKcalsPenalty,
+    setMaxKcals,
   } = props;
 
   return (
@@ -68,8 +70,8 @@ function Sliders(props) {
           id="protPenalty"
           name="protPenalty"
           min="0"
-          max="10"
-          step="1"
+          max="1000"
+          step="100"
           value={protPenalty}
           onChange={(event) => setProtPenalty(event.target.value)}
         />
@@ -82,8 +84,8 @@ function Sliders(props) {
           id="fatPenalty"
           name="fatPenalty"
           min="0"
-          max="10"
-          step="1"
+          max="10000"
+          step="100"
           value={fatPenalty}
           onChange={(event) => setFatPenalty(event.target.value)}
         />
@@ -102,6 +104,20 @@ function Sliders(props) {
           onChange={(event) => setKcalsPenalty(event.target.value)}
         />
         <span>{kcalsPenalty}</span>
+      </div>
+
+      <div>
+        <label htmlFor="maxKcals">Maximum calories:</label>
+        <input
+          type="number"
+          id="maxKcals"
+          name="maxKcals"
+          min="0"
+          max="10000"
+          step="10"
+          value={maxKcals}
+          onChange={(event) => setMaxKcals(parseInt(event.target.value))}
+        />
       </div>
     </div>
   );
