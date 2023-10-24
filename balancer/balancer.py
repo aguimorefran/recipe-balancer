@@ -83,6 +83,9 @@ def solve_problem(params):
     gram_multiplier = [f["serving_size"] for f in foods]
     max_servings = [f["max_servings"] for f in foods]
     max_grams = [f["max_servings"] * f["serving_size"] for f in foods]
+    print("Gram multiplier: ", gram_multiplier)
+    print("Max servings: ", max_servings)
+    print("Max grams: ", max_grams)
 
     ####################################################################################################
     # Problem definition
@@ -95,7 +98,7 @@ def solve_problem(params):
     prob_vars = LpVariable.dicts(
         name="food",
         indices=food_names,
-        lowBound=MIN_GRAMS,
+        lowBound=gram_multiplier,
         upBound=max_grams,
         cat="Integer",
     )
@@ -103,7 +106,7 @@ def solve_problem(params):
     multipliers = LpVariable.dicts(
         "multiplier",
         indices=food_names,
-        lowBound=0,
+        lowBound=1,
         upBound=None,
         cat="Integer",
     )
@@ -111,6 +114,7 @@ def solve_problem(params):
     for f in food_names:
         var = prob_vars[f]
         var.upBound = max_grams[food_names.index(f)]
+        var.lowBound = gram_multiplier[food_names.index(f)]
 
     # Slack variables for constraints
 
@@ -159,6 +163,12 @@ def solve_problem(params):
         prob += (
             prob_vars[f] <= multipliers[f] * max_grams[food_names.index(f)],
             f"Maximum {f} grams",
+        )
+
+    for f in food_names:
+        prob += (
+            prob_vars[f] == multipliers[f] * gram_multiplier[food_names.index(f)],
+            f"Multiple of serving size {f}",
         )
 
     # Solve
