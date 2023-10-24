@@ -5,6 +5,7 @@ import AddFoodPage from "./AddFoodPage";
 import Solver from "./Solver";
 import PieChart from "./Piechart";
 import Sliders from "./Sliders";
+import "./styles.css";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +15,7 @@ function App() {
   const [minPrtoPctg, setMinPrtoPctg] = useState(0.4);
   const [protPenalty, setProtPenalty] = useState(2500);
   const [fatPenalty, setFatPenalty] = useState(2500);
-  const [kcalsPenalty, setKcalsPenalty] = useState(100);
+  const [kcalsPenalty, setKcalsPenalty] = useState(2500);
   const [maxKcals, setMaxKcals] = useState(500);
   const [showAddFoodPage, setShowAddFoodPage] = useState(false);
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
@@ -58,6 +59,11 @@ function App() {
         type="text"
         placeholder="Search for food"
         onChange={(event) => setSearchTerm(event.target.value)}
+        onKeyPress={(event) => {
+          if (event.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
       <button onClick={handleSearch}>Search</button>
       <button onClick={handleAddFoodClick}>{addFoodButtonText}</button>{" "}

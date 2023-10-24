@@ -37,45 +37,50 @@ function SelectedFoodsTable({
   return (
     <>
       {selectedFoods.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Serving Size</th>
-              <th>Max servings</th>
-              <th>Remove</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selectedFoods.map((food) => (
-              <tr key={food.id}>
-                <td>{food.name}</td>
-                <td>
-                  <input
-                    type="number"
-                    value={food.serving_size}
-                    onChange={(e) =>
-                      handleServingSizeChange(food.id, e.target.value)
-                    }
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={food.max_servings}
-                    onChange={(e) =>
-                      handleMaxGramsChange(food.id, e.target.value)
-                    }
-                  />
-                </td>
-
-                <td>
-                  <button onClick={() => onRemoveFood(food.id)}>Remove</button>
-                </td>
+        <div>
+          <h1>Selected foods: {selectedFoods.length}</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Serving Size</th>
+                <th>Max servings</th>
+                <th>Remove</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {selectedFoods.map((food) => (
+                <tr key={food.id}>
+                  <td>{food.name}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={food.serving_size}
+                      onChange={(e) =>
+                        handleServingSizeChange(food.id, e.target.value)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={food.max_servings}
+                      onChange={(e) =>
+                        handleMaxGramsChange(food.id, e.target.value)
+                      }
+                    />
+                  </td>
+
+                  <td>
+                    <button onClick={() => onRemoveFood(food.id)}>
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   );

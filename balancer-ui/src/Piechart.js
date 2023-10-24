@@ -28,7 +28,3 @@ function PieChart({ data }) {
 }
 
 export default PieChart;
-
-// TODO: refresh results on update
-// TODO: solve everytime something is updated?
-// TODO:

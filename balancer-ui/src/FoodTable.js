@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles.css";
 
 const FoodTable = ({
   foods,
@@ -13,7 +14,7 @@ const FoodTable = ({
   return (
     <div>
       <h1>Search results</h1>
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>ID</th>

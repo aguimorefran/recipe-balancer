@@ -98,9 +98,6 @@ function Results({ result_data }) {
             </tr>
           </tbody>
         </table>
-        <div>Slack protein: {result_data.result.slack_protein.toFixed(2)}</div>
-        <div>Slack fat: {result_data.result.slack_fat.toFixed(2)}</div>
-        <div>Slack kcals: {result_data.result.slack_kcals.toFixed(2)}</div>
       </div>
       <div style={{ flex: 1 }}>
         <PieChart
