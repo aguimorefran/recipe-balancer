@@ -97,7 +97,6 @@ function App() {
                 title: "Target macros",
                 labels: ["Carbs", "Protein", "Fat"],
                 values: [1 - maxFatPctg - minPrtoPctg, minPrtoPctg, maxFatPctg],
-                colors: ["#E7ECEF", "#63B3ED", "#F6AD55"],
               }}
             />
           </div>

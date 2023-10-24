@@ -10,7 +10,7 @@ function PieChart({ data }) {
       labels: labels,
       type: "pie",
       marker: {
-        colors: colors,
+        colors: ["#E7ECEF", "#63B3ED", "#F6AD55"],
       },
     },
   ];
@@ -31,4 +31,4 @@ export default PieChart;
 
 // TODO: refresh results on update
 // TODO: solve everytime something is updated?
-// TODO: 
+// TODO:

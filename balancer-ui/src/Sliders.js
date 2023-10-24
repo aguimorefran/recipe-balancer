@@ -70,7 +70,7 @@ function Sliders(props) {
           id="protPenalty"
           name="protPenalty"
           min="0"
-          max="1000"
+          max="2500"
           step="100"
           value={protPenalty}
           onChange={(event) => setProtPenalty(event.target.value)}
@@ -84,7 +84,7 @@ function Sliders(props) {
           id="fatPenalty"
           name="fatPenalty"
           min="0"
-          max="10000"
+          max="25000"
           step="100"
           value={fatPenalty}
           onChange={(event) => setFatPenalty(event.target.value)}
@@ -98,8 +98,8 @@ function Sliders(props) {
           id="kcalsPenalty"
           name="kcalsPenalty"
           min="0"
-          max="200"
-          step="10"
+          max="10000"
+          step="500"
           value={kcalsPenalty}
           onChange={(event) => setKcalsPenalty(event.target.value)}
         />

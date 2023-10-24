@@ -39,7 +39,7 @@ function Solver({
   return (
     <div>
       <h1>Results</h1>
-      <button onClick={handleSolveClick}>Solve</button>
+      <button onClick={handleSolveClick}>Calculate</button>
       {solverResult && Object.keys(solverResult).length !== 0 && (
         <Results result_data={solverResult} />
       )}
