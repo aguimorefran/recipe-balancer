@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PieChart from "./Piechart";
+import html2canvas from "html2canvas";
 
 function Results({ result_data }) {
   const [foodResults, setFoodResults] = useState([]);
@@ -37,15 +38,29 @@ function Results({ result_data }) {
   );
 
   if (foodResults.length === 0) {
-    return <div>No data to display</div>;
+    return (
+      <div style={{ backgroundColor: "orange", padding: "10px" }}>
+        No result
+      </div>
+    );
   }
 
   const { fat_kcal_pctg, carb_kcal_pctg, protein_kcal_pctg } =
     result_data.result;
 
+  const handleSaveImage = () => {
+    const tableContainer = document.querySelector(".table-container");
+    html2canvas(tableContainer).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = "table.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1 }} className="table-container">
         <table>
           <thead>
             <tr>
@@ -74,7 +89,7 @@ function Results({ result_data }) {
                 <td>{food.protein_kcals.toFixed(2)}</td>
               </tr>
             ))}
-            <tr>
+            <tr className="total-row">
               <td>Total</td>
               <td>{total.grams.toFixed(2)}</td>
               <td>{total.cals.toFixed(2)}</td>
@@ -98,6 +113,7 @@ function Results({ result_data }) {
             </tr>
           </tbody>
         </table>
+        <button onClick={handleSaveImage}>Save as image</button>
       </div>
       <div style={{ flex: 1 }}>
         <PieChart
