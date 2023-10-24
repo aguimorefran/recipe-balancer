@@ -55,8 +55,15 @@ function App() {
 
   return (
     <div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img src={require("./logo.png")} width="100" height="100" />
+        <div style={{ marginLeft: "10px", fontSize: "30px" }}>
+          Recipe Balancer
+        </div>
+      </div>
       <input
         type="text"
+        className="textbox-4 textbox-4-main"
         placeholder="Search for food"
         onChange={(event) => setSearchTerm(event.target.value)}
         onKeyPress={(event) => {
@@ -65,8 +72,12 @@ function App() {
           }
         }}
       />
-      <button onClick={handleSearch}>Search</button>
-      <button onClick={handleAddFoodClick}>{addFoodButtonText}</button>{" "}
+      <button className="button-4" onClick={handleSearch}>
+        Search
+      </button>
+      <button className="button-4" onClick={handleAddFoodClick}>
+        {addFoodButtonText}
+      </button>{" "}
       {showAddFoodPage && <AddFoodPage />}
       <FoodTable
         foods={foods}

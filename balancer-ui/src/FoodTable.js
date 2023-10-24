@@ -13,7 +13,6 @@ const FoodTable = ({
 
   return (
     <div>
-      <h1>Search results</h1>
       <table className="table">
         <thead>
           <tr>
@@ -27,7 +26,7 @@ const FoodTable = ({
             <th>Fat/g</th>
             <th>Carbs/g</th>
             <th>Protein/g</th>
-            <th>Select</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -39,7 +38,10 @@ const FoodTable = ({
               <td>{food.subcategory}</td>
               <td>{food.brand === "Ver Más" ? "No brand" : food.brand}</td>
               <td>
-                <button onClick={() => handleOpenUrl(food.item_url)}>
+                <button
+                  className="button-4"
+                  onClick={() => handleOpenUrl(food.item_url)}
+                >
                   {"Open URL"}
                 </button>
               </td>
@@ -49,6 +51,13 @@ const FoodTable = ({
               <td>{food.prot_per_g.toFixed(2)}</td>
               <td>
                 <button
+                  className={
+                    selectedFoods.some(
+                      (selectedFood) => selectedFood.id === food.id
+                    )
+                      ? "button-4 button-4-lightred" // use light red color if food is selected
+                      : "button-4 button-4-lightgreen" // use light green color if food is not selected
+                  }
                   onClick={() =>
                     selectedFoods.some(
                       (selectedFood) => selectedFood.id === food.id

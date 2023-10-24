@@ -21,7 +21,7 @@ function Sliders(props) {
     <div>
       <h1>Balance configuration</h1>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <div style={{ flex: 1 }}>
+        <div style={{ minWidth: "300px" }}>
           <label htmlFor="minPrtoPctg">Minimum protein percentage:</label>
           <br />
           <label htmlFor="maxFatPctg">Maximum fat percentage:</label>
@@ -113,6 +113,7 @@ function Sliders(props) {
           <br />
           <input
             type="text"
+            className="textbox-4"
             id="maxKcals"
             name="maxKcals"
             value={maxKcals}

@@ -30,7 +30,10 @@ def search_food(name: str = None):
     else:
         name_words = name.split()
         where_clause = " AND ".join(
-            [f"(name LIKE '%{word}%' OR brand LIKE '%{word}%')" for word in name_words]
+            [
+                f"(name LIKE '%{word}%' OR brand LIKE '%{word}%' OR category LIKE '%{word}%' OR subcategory LIKE '%{word}%')"
+                for word in name_words
+            ]
         )
         fetched_foods = execute_query(f"SELECT * FROM food WHERE {where_clause}")
     foods = []

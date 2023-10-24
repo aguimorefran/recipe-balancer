@@ -38,7 +38,7 @@ function SelectedFoodsTable({
     <>
       {selectedFoods.length > 0 && (
         <div>
-          <h1>Selected foods: {selectedFoods.length}</h1>
+          <h2>Selected foods: {selectedFoods.length}</h2>
           <table>
             <thead>
               <tr>
@@ -54,6 +54,7 @@ function SelectedFoodsTable({
                   <td>{food.name}</td>
                   <td>
                     <input
+                      className="textbox-4"
                       type="number"
                       value={food.serving_size}
                       onChange={(e) =>
@@ -63,6 +64,7 @@ function SelectedFoodsTable({
                   </td>
                   <td>
                     <input
+                      className="textbox-4"
                       type="number"
                       value={food.max_servings}
                       onChange={(e) =>
@@ -72,7 +74,10 @@ function SelectedFoodsTable({
                   </td>
 
                   <td>
-                    <button onClick={() => onRemoveFood(food.id)}>
+                    <button
+                      className="button-4 button-4-lightred"
+                      onClick={() => onRemoveFood(food.id)}
+                    >
                       Remove
                     </button>
                   </td>

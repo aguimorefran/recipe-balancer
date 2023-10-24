@@ -113,7 +113,9 @@ function Results({ result_data }) {
             </tr>
           </tbody>
         </table>
-        <button onClick={handleSaveImage}>Save as image</button>
+        <button className="button-4" onClick={handleSaveImage}>
+          Save as image
+        </button>
       </div>
       <div style={{ flex: 1 }}>
         <PieChart
