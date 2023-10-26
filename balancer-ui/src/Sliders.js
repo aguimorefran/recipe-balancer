@@ -104,8 +104,8 @@ function Sliders(props) {
             id="kcalsPenalty"
             name="kcalsPenalty"
             min="0"
-            max="10000"
-            step="1000"
+            max="2000"
+            step="100"
             value={kcalsPenalty}
             onChange={(event) => setKcalsPenalty(event.target.value)}
           />

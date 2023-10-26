@@ -1,6 +1,7 @@
 requests
-beautifulsoup4
+beautifulsoup4==4.12.2
 tqdm
 fastapi
 uvicorn
 unidecode
+pulp

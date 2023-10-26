@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Results from "./Results";
+import config from "./config.js";
 
 function Solver({
   selectedFoods,
@@ -24,7 +25,8 @@ function Solver({
       foods: selectedFoods,
     };
     console.log(requestBody);
-    const response = await fetch("http://127.0.0.1:8000/solve_problem", {
+    const req_url = config.getRequestUrl();
+    const response = await fetch(`${req_url}/solve_problem`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

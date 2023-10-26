@@ -1,0 +1,6 @@
+fastapi
+pulp
+pandas
+requests
+pydantic
+uvicorn

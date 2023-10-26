@@ -6,6 +6,7 @@ import Solver from "./Solver";
 import PieChart from "./Piechart";
 import Sliders from "./Sliders";
 import "./styles.css";
+import config from "./config.js";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +36,8 @@ function App() {
   };
 
   const handleSearch = () => {
-    fetch(`http://127.0.0.1:8000/search_food?name=${searchTerm}`)
+    const req_url = config.getRequestUrl();
+    fetch(`${req_url}/search_food?name=${searchTerm}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);

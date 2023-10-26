@@ -119,4 +119,3 @@ def insert_food(food_dict, verbose=False):
     except Exception as e:
         if verbose:
             print(f"Error inserting food with name {food_dict['name']}: {e}")
-        return False

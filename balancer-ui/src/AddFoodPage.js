@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./styles.css";
+import config from "./config.js";
 
 function AddFoodPage() {
   const [url, setUrl] = useState("");
@@ -11,7 +12,8 @@ function AddFoodPage() {
 
   const handleAddFood = () => {
     const encodedUrl = encodeURIComponent(url);
-    const endpoint = `http://127.0.0.1:8000/harvest_url?url=${encodedUrl}&category=${category}&subcategory=${subcategory}`;
+    const req_url = config.getRequestUrl();
+    const endpoint = `${req_url}/harvest_url?url=${encodedUrl}&category=${category}&subcategory=${subcategory}`;
 
     fetch(endpoint)
       .then((response) => {
