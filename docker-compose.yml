@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./react-app:/app
+      - ./balancer-ui:/app
     depends_on:
       - balancer
     environment:
@@ -23,4 +23,4 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./fastapi-app:/app
+      - ./balancer/app:/app

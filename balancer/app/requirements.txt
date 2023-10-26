@@ -4,3 +4,6 @@ pandas
 requests
 pydantic
 uvicorn
+unidecode
+beautifulsoup4
+tqdm
