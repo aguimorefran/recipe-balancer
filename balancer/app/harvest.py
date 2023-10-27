@@ -140,71 +140,6 @@ def __fetch_metadata(food_dict, verbose=False, mode=None):
     return result
 
 
-def __get_food_info(
-    food_dict, suffix, min_results=FOOD_RESULTS, verbose=False, mode=None
-):
-    data = []
-    page = 0
-    if suffix != "":
-        search_term = food_dict["search_term"] + " " + suffix
-    else:
-        search_term = food_dict["search_term"]
-    while len(data) < min_results:
-        food_dicts = __add_item_url(food_dict, suffix, page, verbose, mode=mode)
-        for food_dict in tqdm(food_dicts, leave=False):
-            saved_food = food_exists(food_dict["item_url"], verbose)
-            if saved_food is not None:
-                if verbose:
-                    print(f"Found {saved_food['name']} in database.")
-                data.append(saved_food)
-                if len(data) >= min_results:
-                    break
-            else:
-                if __check_100g(food_dict, verbose, mode=mode):
-                    food_dict.update(__fetch_macros(food_dict, verbose, mode=mode))
-                    food_dict.update(__fetch_metadata(food_dict, verbose, mode=mode))
-                    insert_food(food_dict, verbose)
-                    data.append(food_dict)
-                    if verbose:
-                        print(f"Harvested {len(data)} / {min_results} results.")
-                        print("--------------------------------------------------")
-                    if len(data) >= min_results:
-                        break
-        page += 1
-    if verbose:
-        print(f"Found {len(data)} results for {search_term}.")
-        print("==================================================")
-    return data
-
-
-def harvest(search_list, suffixes, verbose):
-    harvested = []
-    total_items = len(search_list) * len(suffixes) if suffixes else len(search_list)
-    with tqdm(total=total_items) as pbar:
-        for i, food in enumerate(search_list):
-            for suf in suffixes or [""]:
-                pbar.set_description(f"Harvesting {food} {suf}")
-                food_info = __get_food_info(food, suf, verbose=verbose)
-                harvested.append(food_info)
-                pbar.update(1)
-                if verbose:
-                    print("-------------------------------------------------------")
-                    print(f"Done: {i+1}/{total_items} ({(i+1)/total_items*100:.2f}%)")
-                    print("-------------------------------------------------------\n")
-    return harvested
-
-
-def harvest_single(food, suffix, verbose, mode):
-    if verbose:
-        print(f"Harvesting {food} {suffix}")
-    result = []
-    food_info = __get_food_info(food, suffix, verbose=verbose, mode=mode)
-    if verbose:
-        print(f"Harvested {len(food_info)} results for {food['search_term']}.")
-    result.append(food_info)
-    return result
-
-
 def harvest_url(conn, url, cat, subcat, verbose):
     if verbose:
         print(f"Harvesting from {url}")
@@ -224,6 +159,8 @@ def harvest_url(conn, url, cat, subcat, verbose):
     if food_info is None:
         raise Exception(f"Error fetching macros for {url}.")
     food_dict.update(food_info)
+    if not __check_100g(food_dict, verbose):
+        raise Exception(f"Food {url} is not 100g.")
     food_dict["serving_size"] = 0
     insert_food(conn, food_dict, verbose)
     if food_exists(conn, url, verbose) is None:
