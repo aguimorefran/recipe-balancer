@@ -22,12 +22,22 @@ function App() {
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
 
   const handleSelectFood = (food) => {
+    const req_url = config.getRequestUrl();
     console.log("Inserting food into selectedFoods: ", food);
     if (!selectedFoods.map((food) => food.id).includes(food.id)) {
       setSelectedFoods([
         ...selectedFoods,
         { ...food, max_servings: 0, serving_size: 0 },
       ]);
+      fetch(`${req_url}/inc_selection?food_id=${food.id}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
     }
   };
 

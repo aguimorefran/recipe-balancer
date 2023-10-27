@@ -6,7 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from harvest import harvest_url as harvest
 
 from balancer import solve_problem as solve
-from db import create_conn, fetch_food, insert_food
+from db import create_conn, fetch_food, inc_selection
+
+conn = create_conn()
 
 app = FastAPI()
 
@@ -17,8 +19,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-conn = create_conn()
 
 
 @app.get("/search_food")
@@ -34,6 +34,24 @@ def search_food(name: str = None):
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Max-Age"] = "86400"
     return {"foods": fetched_foods}
+
+
+@app.get("/inc_selection")
+def increment_selections(food_id: int):
+    """
+    Increments the number of times the food has been selected.
+    """
+    try:
+        result = inc_selection(conn, food_id)
+        response = Response()
+    except Exception as e:
+        response = Response(status_code=500)
+        return {"error": str(e)}
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Max-Age"] = "86400"
+    return {"result": result}
 
 
 @app.get("/harvest_url")

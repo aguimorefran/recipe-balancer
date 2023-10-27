@@ -1,7 +1,7 @@
 import os
 
 import psycopg2
-from config import DB_HOST, DB_PASSWORD, DB_PORT, DB_USER
+from config import DB_HOST, DB_PASSWORD, DB_PORT, DB_USER, DB_RESET
 from unidecode import unidecode
 
 FOOD_COLS = [
@@ -17,18 +17,21 @@ FOOD_COLS = [
     ("carb_per_g", "REAL"),
     ("prot_per_g", "REAL"),
     ("serving_size", "REAL"),
+    ("times_selected", "INTEGER"),
 ]
 
 
 def init_tables(conn):
-    # foods
     cur = conn.cursor()
+    print("DB_RESET:", DB_RESET)
+    if DB_RESET == "true":
+        print("Resetting database...")
+        cur.execute("DROP TABLE IF EXISTS foods")
     cur.execute(
         "CREATE TABLE IF NOT EXISTS foods ("
         + ",".join([f"{col} {dtype}" for col, dtype in FOOD_COLS])
         + ")"
     )
-    # Check if table exists
     cur.execute(
         "SELECT EXISTS ("
         "SELECT FROM information_schema.tables "
@@ -65,12 +68,23 @@ def fetch_food(conn, name):
                 for col in ["name", "brand", "category", "subcategory"]
             ]
         )
+        query += " ORDER BY times_selected DESC"
         cur.execute(query)
     result = cur.fetchall()
     cur.close()
-    result = [{FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}]
+    result = (
+        [{FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}]
+        if len(result) > 0
+        else []
+    )
 
     return result
+
+def inc_selection(conn, food_id):
+    cur = conn.cursor()
+    cur.execute("UPDATE foods SET times_selected = times_selected + 1 WHERE id = %s", (food_id,))
+    conn.commit()
+    cur.close()
 
 
 def food_exists(conn, url, verbose=False):
@@ -103,9 +117,10 @@ def insert_food(conn, food_dict, verbose=False):
         carb_per_g = food_dict["carb_per_g"]
         prot_per_g = food_dict["prot_per_g"]
         serving_size = food_dict["serving_size"]
+        times_selected = food_dict["times_selected"]
 
         cur.execute(
-            "INSERT INTO foods (search_term, name, category, subcategory, brand, item_url, cals_per_g, fat_per_g, carb_per_g, prot_per_g, serving_size) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO foods (search_term, name, category, subcategory, brand, item_url, cals_per_g, fat_per_g, carb_per_g, prot_per_g, serving_size, times_selected) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 name,
                 name,
@@ -118,6 +133,7 @@ def insert_food(conn, food_dict, verbose=False):
                 carb_per_g,
                 prot_per_g,
                 serving_size,
+                times_selected,
             ),
         )
 

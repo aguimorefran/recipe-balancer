@@ -29,6 +29,7 @@ services:
       - DB_NAME=postgres
       - DB_USER=postgres
       - DB_PASSWORD=postgres
+      - DB_RESET=true
     depends_on:
       - db
 

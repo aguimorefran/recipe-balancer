@@ -26,6 +26,7 @@ const FoodTable = ({
             <th>Fat/g</th>
             <th>Carbs/g</th>
             <th>Protein/g</th>
+            <th>Times selected</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@ const FoodTable = ({
               <td>{food.fat_per_g.toFixed(2)}</td>
               <td>{food.carb_per_g.toFixed(2)}</td>
               <td>{food.prot_per_g.toFixed(2)}</td>
+              <td>{food.times_selected}</td>
               <td>
                 <button
                   className={

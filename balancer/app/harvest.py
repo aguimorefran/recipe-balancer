@@ -56,14 +56,18 @@ def __check_100g(food_dict, verbose=False, mode=None):
     item_url = food_dict.get("item_url")
     soup = BeautifulSoup(__request(item_url, mode=mode).text, "html.parser")
     serving_size = soup.find("div", {"class": "serving_size black serving_size_value"})
-    if verbose:
-        print(f"Checking if {food_dict['search_term']} is 100g -- {item_url}")
-        if serving_size is not None and serving_size.text == "100 g":
-            print("This food is 100g.")
-        else:
-            print("This food is not 100g.")
-        print("--------------------------------------------------")
-    return serving_size is not None and serving_size.text == "100 g"
+
+    print(f"Checking if {food_dict['search_term']} is 100g -- {item_url}")
+    if serving_size is not None and (
+        serving_size.text == "100 g" or serving_size.text == "100 ml"
+    ):
+        print("This food is 100g.")
+        print(serving_size.text)
+        return serving_size
+    else:
+        print("This food is not 100g.")
+        print(serving_size.text)
+        return False
 
 
 def __fetch_macros(food_dict, verbose=False, mode=None):
@@ -163,6 +167,7 @@ def harvest_url(conn, url, cat, subcat, verbose):
     if not __check_100g(food_dict, verbose):
         raise Exception(f"Food {url} is not 100g.")
     food_dict["serving_size"] = 0
+    food_dict["times_selected"] = 0
     insert_food(conn, food_dict, verbose)
     if food_exists(conn, url, verbose) is None:
         raise Exception(f"Error inserting {url} into database.")
