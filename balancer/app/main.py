@@ -33,7 +33,6 @@ def search_food(name: str = None):
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Max-Age"] = "86400"
-    print(fetched_foods)
     return {"foods": fetched_foods}
 
 
@@ -57,7 +56,6 @@ def harvest_url(url: str, category: str, subcategory: str):
 
 @app.post("/solve_problem")
 async def solve_problem(data: dict):
-    print(json.dumps(data, indent=4))
     target_kcals = data["target_kcals"]
     max_fat_pct = data["max_fat_pct"]
     min_prot_pct = data["min_prot_pct"]

@@ -83,9 +83,6 @@ def solve_problem(params):
     gram_multiplier = [f["serving_size"] for f in foods]
     max_servings = [f["max_servings"] for f in foods]
     max_grams = [f["max_servings"] * f["serving_size"] for f in foods]
-    print("Gram multiplier: ", gram_multiplier)
-    print("Max servings: ", max_servings)
-    print("Max grams: ", max_grams)
 
     ####################################################################################################
     # Problem definition

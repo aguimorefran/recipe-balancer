@@ -36,10 +36,6 @@ def init_tables(conn):
         "AND table_name = 'foods'"
         ")"
     )
-    if cur.fetchone()[0]:
-        print(">>> Table 'foods' exists")
-    else:
-        print(">>> Table 'foods' does not exist")
     conn.commit()
     cur.close()
 
@@ -78,21 +74,15 @@ def fetch_food(conn, name):
 
 
 def food_exists(conn, url, verbose=False):
-    print(">>> Checking if food exists")
     cur = conn.cursor()
     cur.execute("SELECT * FROM foods WHERE item_url = %s", (url,))
     result = cur.fetchall()
-    print(result)
-    cur.close()
     if len(result) > 0:
         return {FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}
-    else:
-        return None
+    return None
 
 
 def insert_food(conn, food_dict, verbose=False):
-    print(">>> Inserting food")
-    print(food_dict)
     try:
         cur = conn.cursor()
         values = []
@@ -135,5 +125,4 @@ def insert_food(conn, food_dict, verbose=False):
         cur.close()
         return True
     except Exception as e:
-        print(f"Error inserting food with name {food_dict['name']}: {e}")
         return False
