@@ -7,3 +7,5 @@ uvicorn
 unidecode
 beautifulsoup4
 tqdm
+python-dotenv
+psycopg2

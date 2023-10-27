@@ -1,10 +1,11 @@
 import os
-import sqlite3
+import psycopg2
 from unidecode import unidecode
+from config import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
 
 
-DB_COLUMNS = [
-    ("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
+FOOD_COLS = [
+    ("id", "SERIAL PRIMARY KEY"),
     ("search_term", "TEXT"),
     ("name", "TEXT"),
     ("category", "TEXT"),
@@ -19,103 +20,120 @@ DB_COLUMNS = [
 ]
 
 
-def drop_table():
-    conn = sqlite3.connect("food.db")
-    c = conn.cursor()
-    c.execute("DROP TABLE food")
-    conn.commit()
-    conn.close()
-
-
-def init_db(delete=False):
-    if delete:
-        if os.path.isfile("food.db"):
-            os.remove("food.db")
-    if os.path.isfile("food.db"):
-        conn = sqlite3.connect("food.db")
-        c = conn.cursor()
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='food'")
-        result = c.fetchone()
-        if result is None:
-            print("Error: food table does not exist")
-            return False
-        else:
-            c.execute("SELECT * FROM food LIMIT 1")
-            result = c.fetchone()
-            if result is None:
-                print("Error: food table is empty")
-                return False
+def init_tables(conn):
+    # foods
+    cur = conn.cursor()
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS foods ("
+        + ",".join([f"{col} {dtype}" for col, dtype in FOOD_COLS])
+        + ")"
+    )
+    # Check if table exists
+    cur.execute(
+        "SELECT EXISTS ("
+        "SELECT FROM information_schema.tables "
+        "WHERE table_schema = 'public' "
+        "AND table_name = 'foods'"
+        ")"
+    )
+    if cur.fetchone()[0]:
+        print(">>> Table 'foods' exists")
     else:
-        conn = sqlite3.connect("food.db")
-        c = conn.cursor()
-        c.execute(
-            "CREATE TABLE food ("
-            + ", ".join([f"{col[0]} {col[1]}" for col in DB_COLUMNS])
-            + ")"
+        print(">>> Table 'foods' does not exist")
+    conn.commit()
+    cur.close()
+
+
+def create_conn():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        dbname="postgres",
+    )
+    init_tables(conn)
+    return conn
+
+
+def fetch_food(conn, name):
+    cur = conn.cursor()
+    if name is None:
+        cur.execute("SELECT * FROM foods")
+    else:
+        name = unidecode(name).lower().strip()
+        query = "SELECT * FROM foods WHERE "
+        query += " OR ".join(
+            [
+                f"LOWER({col}) LIKE '%{name}%'"
+                for col in ["name", "brand", "category", "subcategory"]
+            ]
         )
-        conn.commit()
-        c.execute(
-            "INSERT INTO food VALUES (" + ", ".join(["?" for _ in DB_COLUMNS]) + ")",
-            [None for _ in DB_COLUMNS],
-        )
-        conn.commit()
-    conn.close()
-    return True
+        cur.execute(query)
+    result = cur.fetchall()
+    cur.close()
+    result = [{FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}]
+
+    return result
 
 
-def execute_query(query):
-    try:
-        conn = sqlite3.connect("food.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        result = c.fetchall()
-        conn.close()
-        return result
-    except Exception as e:
-        print(f"Error executing query: {e}")
+def food_exists(conn, url, verbose=False):
+    print(">>> Checking if food exists")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM foods WHERE item_url = %s", (url,))
+    result = cur.fetchall()
+    print(result)
+    cur.close()
+    if len(result) > 0:
+        return {FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}
+    else:
         return None
 
 
-def food_exists(item_url, verbose=False):
+def insert_food(conn, food_dict, verbose=False):
+    print(">>> Inserting food")
+    print(food_dict)
     try:
-        if verbose:
-            print(f"Checking if food exists: {item_url}")
-        conn = sqlite3.connect("food.db")
-        c = conn.cursor()
-        c.execute("SELECT * FROM food WHERE item_url=?", (item_url,))
-        result = c.fetchone()
-        conn.close()
-        if result:
-            return dict(zip([col[0] for col in DB_COLUMNS], result))
-        return None
-    except Exception as e:
-        print(f"Error checking if food exists: {e}")
-        return None
-
-
-def insert_food(food_dict, verbose=False):
-    try:
-        conn = sqlite3.connect("food.db")
-        c = conn.cursor()
+        cur = conn.cursor()
         values = []
-        for col in DB_COLUMNS:
+        for col in FOOD_COLS:
             if col[0] in food_dict:
                 if isinstance(food_dict[col[0]], str):
-                    # Replace accented vowels with normal vowels
                     food_dict[col[0]] = unidecode(food_dict[col[0]])
                 values.append(food_dict[col[0]])
             else:
                 values.append(None)
-        c.execute(
-            "INSERT INTO food VALUES (" + ", ".join(["?" for _ in DB_COLUMNS]) + ")",
-            values,
+        name = unidecode(food_dict["name"]).strip()
+        brand = unidecode(food_dict["brand"]).strip()
+        category = unidecode(food_dict["category"]).lower().strip()
+        subcategory = unidecode(food_dict["subcategory"]).lower().strip()
+        item_url = food_dict["item_url"]
+        cals_per_g = food_dict["cals_per_g"]
+        fat_per_g = food_dict["fat_per_g"]
+        carb_per_g = food_dict["carb_per_g"]
+        prot_per_g = food_dict["prot_per_g"]
+        serving_size = food_dict["serving_size"]
+
+        cur.execute(
+            "INSERT INTO foods (search_term, name, category, subcategory, brand, item_url, cals_per_g, fat_per_g, carb_per_g, prot_per_g, serving_size) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                name,
+                name,
+                category,
+                subcategory,
+                brand,
+                item_url,
+                cals_per_g,
+                fat_per_g,
+                carb_per_g,
+                prot_per_g,
+                serving_size,
+            ),
         )
+
         conn.commit()
-        conn.close()
-        if verbose:
-            print(f"Successfully inserted food with name {food_dict['name']}")
+        cur.close()
         return True
     except Exception as e:
-        if verbose:
-            print(f"Error inserting food with name {food_dict['name']}: {e}")
+        print(f"Error inserting food with name {food_dict['name']}: {e}")
+        return False

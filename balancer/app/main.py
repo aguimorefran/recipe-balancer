@@ -1,7 +1,7 @@
 from typing import List, Dict
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from db import DB_COLUMNS, execute_query
+from db import create_conn, fetch_food, insert_food
 from balancer import solve_problem as solve
 from harvest import harvest_url as harvest
 import json
@@ -16,6 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+conn = create_conn()
+
 
 @app.get("/search_food")
 def search_food(name: str = None):
@@ -23,51 +25,14 @@ def search_food(name: str = None):
     Searches for foods in the database that match the given name or brand.
     If name is None, returns all the foods in the database.
     """
-    if name == "":
-        return {"foods": []}
-    if name is None:
-        fetched_foods = execute_query("SELECT * FROM food")
-    else:
-        name_words = name.split()
-        where_clause = " AND ".join(
-            [
-                f"(name LIKE '%{word}%' OR brand LIKE '%{word}%' OR category LIKE '%{word}%' OR subcategory LIKE '%{word}%')"
-                for word in name_words
-            ]
-        )
-        fetched_foods = execute_query(f"SELECT * FROM food WHERE {where_clause}")
-    foods = []
-    for fetched_food in fetched_foods:
-        food = {}
-        for i, col in enumerate(DB_COLUMNS):
-            food[col[0]] = fetched_food[i]
-        foods.append(food)
+    fetched_foods = fetch_food(conn, name)
     response = Response()
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Max-Age"] = "86400"
-    return {"foods": foods}
-
-
-@app.get("/food")
-def get_food(food_id: int):
-    """
-    Gets a food from the database given its id.
-    """
-    fetched_foods = execute_query(f"SELECT * FROM food WHERE id = {food_id}")
-    foods = []
-    for fetched_food in fetched_foods:
-        food = {}
-        for i, col in enumerate(DB_COLUMNS):
-            food[col[0]] = fetched_food[i]
-        foods.append(food)
-    response = Response()
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Max-Age"] = "86400"
-    return {"results": foods}
+    print(fetched_foods)
+    return {"foods": fetched_foods}
 
 
 @app.get("/harvest_url")
@@ -76,7 +41,7 @@ def harvest_url(url: str, category: str, subcategory: str):
     Harvests a food from the given url.
     """
     try:
-        result = harvest(url, category, subcategory, True)
+        result = harvest(conn, url, category, subcategory, True)
         response = Response()
     except Exception as e:
         response = Response(status_code=500)

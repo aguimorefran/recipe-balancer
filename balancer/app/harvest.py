@@ -3,7 +3,7 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from db import food_exists, init_db, insert_food
+from db import food_exists, insert_food
 from requests.exceptions import RequestException
 from tqdm import tqdm
 
@@ -11,9 +11,6 @@ MAX_REQUESTS = 5
 REQUEST_DELAY_SECONDS = 60
 FOOD_RESULTS = 5
 FOODS_JSON_PATH = "resources/foods.json"
-
-
-init_db()
 
 
 def __request(url, mode=None):
@@ -208,10 +205,10 @@ def harvest_single(food, suffix, verbose, mode):
     return result
 
 
-def harvest_url(url, cat, subcat, verbose):
+def harvest_url(conn, url, cat, subcat, verbose):
     if verbose:
         print(f"Harvesting from {url}")
-    if food_exists(url, verbose):
+    if food_exists(conn, url, verbose):
         raise Exception(f"Food {url} already in database.")
     food_dict = {
         "item_url": url,
@@ -227,14 +224,8 @@ def harvest_url(url, cat, subcat, verbose):
     if food_info is None:
         raise Exception(f"Error fetching macros for {url}.")
     food_dict.update(food_info)
-    insert_food(food_dict, verbose)
-    if food_exists(url, verbose) is None:
+    food_dict["serving_size"] = 0
+    insert_food(conn, food_dict, verbose)
+    if food_exists(conn, url, verbose) is None:
         raise Exception(f"Error inserting {url} into database.")
-    return food_exists(url, verbose)
-
-
-# with open(FOODS_JSON_PATH, "r", encoding="utf-8") as f:
-#     foods = json.load(f)
-# food_list = foods.get("data", [])
-
-# f = harvest(food_list, None, verbose=False)
+    return food_exists(conn, url, verbose)

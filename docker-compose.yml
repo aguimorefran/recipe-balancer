@@ -1,19 +1,17 @@
 version: "3.8"
 
 services:
-  front:
-    container_name: front
-    build:
-      context: ./balancer-ui
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./balancer-ui:/app
-    depends_on:
-      - balancer
+  db:
+    image: postgres
+    container_name: db
     environment:
-      - DOCKER_APP="true"
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
 
   balancer:
     container_name: balancer
@@ -24,3 +22,26 @@ services:
       - "8000:8000"
     volumes:
       - ./balancer/app:/app
+    environment:
+      - DOCKER_APP="true"
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      - db
+
+  front:
+    container_name: front
+    build:
+      context: ./balancer-ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./balancer-ui:/app
+    environment:
+      - DOCKER_APP="true"
+    depends_on:
+      - balancer
