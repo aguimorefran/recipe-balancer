@@ -3,9 +3,10 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from db import food_exists, insert_food
 from requests.exceptions import RequestException
 from tqdm import tqdm
+
+from db import food_exists, insert_food
 
 MAX_REQUESTS = 5
 REQUEST_DELAY_SECONDS = 60

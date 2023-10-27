@@ -1,10 +1,12 @@
-from typing import List, Dict
+import json
+from typing import Dict, List
+
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from db import create_conn, fetch_food, insert_food
-from balancer import solve_problem as solve
 from harvest import harvest_url as harvest
-import json
+
+from balancer import solve_problem as solve
+from db import create_conn, fetch_food, insert_food
 
 app = FastAPI()
 
