@@ -57,32 +57,32 @@ def create_conn():
 
 def fetch_food(conn, name):
     cur = conn.cursor()
-    if name is None:
-        cur.execute("SELECT * FROM foods")
-    else:
-        name = unidecode(name).lower().strip()
-        query = "SELECT * FROM foods WHERE "
-        query += " OR ".join(
-            [
-                f"LOWER({col}) LIKE '%{name}%'"
-                for col in ["name", "brand", "category", "subcategory"]
-            ]
-        )
-        query += " ORDER BY times_selected DESC"
-        cur.execute(query)
+    name = unidecode(name).lower().strip()
+    query = "SELECT * FROM foods WHERE "
+    query += " OR ".join(
+        [
+            f"LOWER({col}) LIKE '%{name}%'"
+            for col in ["name", "brand", "category", "subcategory"]
+        ]
+    )
+    query += " ORDER BY times_selected DESC, name ASC"
+    cur.execute(query)
     result = cur.fetchall()
+    print(result)
     cur.close()
     result = (
-        [{FOOD_COLS[i][0]: result[0][i] for i in range(len(FOOD_COLS))}]
+        [{FOOD_COLS[i][0]: row[i] for i in range(len(FOOD_COLS))} for row in result]
         if len(result) > 0
         else []
     )
-
     return result
+
 
 def inc_selection(conn, food_id):
     cur = conn.cursor()
-    cur.execute("UPDATE foods SET times_selected = times_selected + 1 WHERE id = %s", (food_id,))
+    cur.execute(
+        "UPDATE foods SET times_selected = times_selected + 1 WHERE id = %s", (food_id,)
+    )
     conn.commit()
     cur.close()
 

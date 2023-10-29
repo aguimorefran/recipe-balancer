@@ -29,7 +29,7 @@ services:
       - DB_NAME=postgres
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-      - DB_RESET=true
+      - DB_RESET=false
     depends_on:
       - db
 
@@ -44,5 +44,6 @@ services:
       - ./balancer-ui:/app
     environment:
       - DOCKER_APP="true"
+      - CHOKIDAR_USEPOLLING= "true"
     depends_on:
       - balancer

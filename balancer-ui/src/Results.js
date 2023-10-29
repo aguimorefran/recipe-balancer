@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PieChart from "./Piechart";
 import html2canvas from "html2canvas";
+import Recommendator from "./Recommendator";
 
 function Results({ result_data }) {
   const [foodResults, setFoodResults] = useState([]);
@@ -59,73 +60,76 @@ function Results({ result_data }) {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ flex: 1 }} className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Grams</th>
-              <th>Cals</th>
-              <th>Fat (g)</th>
-              <th>Carbs (g)</th>
-              <th>Protein (g)</th>
-              <th>Fat (kcals)</th>
-              <th>Carbs (kcals)</th>
-              <th>Protein (kcals)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foodResults.map((food) => (
-              <tr key={food.name}>
-                <td>{food.name}</td>
-                <td>{food.grams.toFixed(2)}</td>
-                <td>{food.cals.toFixed(2)}</td>
-                <td>{food.fat_grams.toFixed(2)}</td>
-                <td>{food.carb_grams.toFixed(2)}</td>
-                <td>{food.protein_grams.toFixed(2)}</td>
-                <td>{food.fat_kcals.toFixed(2)}</td>
-                <td>{food.carb_kcals.toFixed(2)}</td>
-                <td>{food.protein_kcals.toFixed(2)}</td>
+    <div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ flex: 1 }} className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Grams</th>
+                <th>Cals</th>
+                <th>Fat (g)</th>
+                <th>Carbs (g)</th>
+                <th>Protein (g)</th>
+                <th>Fat (kcals)</th>
+                <th>Carbs (kcals)</th>
+                <th>Protein (kcals)</th>
               </tr>
-            ))}
-            <tr className="total-row">
-              <td>Total</td>
-              <td>{total.grams.toFixed(2)}</td>
-              <td>{total.cals.toFixed(2)}</td>
-              <td>{total.fat_grams.toFixed(2)}</td>
-              <td>{total.carb_grams.toFixed(2)}</td>
-              <td>{total.protein_grams.toFixed(2)}</td>
-              <td>{total.fat_kcals.toFixed(2)}</td>
-              <td>{total.carb_kcals.toFixed(2)}</td>
-              <td>{total.protein_kcals.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>{(fat_kcal_pctg * 100).toFixed(2)}%</td>
-              <td>{(carb_kcal_pctg * 100).toFixed(2)}%</td>
-              <td>{(protein_kcal_pctg * 100).toFixed(2)}%</td>
-            </tr>
-          </tbody>
-        </table>
-        <button className="button-4" onClick={handleSaveImage}>
-          Save as image
-        </button>
+            </thead>
+            <tbody>
+              {foodResults.map((food) => (
+                <tr key={food.name}>
+                  <td>{food.name}</td>
+                  <td>{food.grams.toFixed(2)}</td>
+                  <td>{food.cals.toFixed(2)}</td>
+                  <td>{food.fat_grams.toFixed(2)}</td>
+                  <td>{food.carb_grams.toFixed(2)}</td>
+                  <td>{food.protein_grams.toFixed(2)}</td>
+                  <td>{food.fat_kcals.toFixed(2)}</td>
+                  <td>{food.carb_kcals.toFixed(2)}</td>
+                  <td>{food.protein_kcals.toFixed(2)}</td>
+                </tr>
+              ))}
+              <tr className="total-row">
+                <td>Total</td>
+                <td>{total.grams.toFixed(2)}</td>
+                <td>{total.cals.toFixed(2)}</td>
+                <td>{total.fat_grams.toFixed(2)}</td>
+                <td>{total.carb_grams.toFixed(2)}</td>
+                <td>{total.protein_grams.toFixed(2)}</td>
+                <td>{total.fat_kcals.toFixed(2)}</td>
+                <td>{total.carb_kcals.toFixed(2)}</td>
+                <td>{total.protein_kcals.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{(fat_kcal_pctg * 100).toFixed(2)}%</td>
+                <td>{(carb_kcal_pctg * 100).toFixed(2)}%</td>
+                <td>{(protein_kcal_pctg * 100).toFixed(2)}%</td>
+              </tr>
+            </tbody>
+          </table>
+          <button className="button-4" onClick={handleSaveImage}>
+            Save as image
+          </button>
+        </div>
+        <div style={{ flex: 1 }}>
+          <PieChart
+            data={{
+              title: "Result macros",
+              labels: ["Carbs", "Protein", "Fat"],
+              values: [carb_kcal_pctg, protein_kcal_pctg, fat_kcal_pctg],
+            }}
+          />
+        </div>
       </div>
-      <div style={{ flex: 1 }}>
-        <PieChart
-          data={{
-            title: "Result macros",
-            labels: ["Carbs", "Protein", "Fat"],
-            values: [carb_kcal_pctg, protein_kcal_pctg, fat_kcal_pctg],
-          }}
-        />
-      </div>
+      <Recommendator foodResults={foodResults} />
     </div>
   );
 }
