@@ -41,13 +41,27 @@ function Solver({
 
   return (
     <div>
-      <h1>Solver</h1>
-      <button className="button-4" onClick={handleSolveClick}>
-        Calculate
-      </button>
+      <div
+        style={{
+          border: "1px solid #444",
+          borderRadius: "10px",
+          padding: "20px",
+          margin: "20px",
+          backgroundColor: "#eee",
+        }}
+      >
+        <h1>Solver</h1>
+        <button className="button-4" onClick={handleSolveClick}>
+          Calculate
+        </button>
+        {solverResult && Object.keys(solverResult).length !== 0 && (
+          <div>
+            <Results result_data={solverResult} />
+          </div>
+        )}
+      </div>
       {solverResult && Object.keys(solverResult).length !== 0 && (
         <div>
-          <Results result_data={solverResult} />
           <Generator solverResult={solverResult} />
         </div>
       )}

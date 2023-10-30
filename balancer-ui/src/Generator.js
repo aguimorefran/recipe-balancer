@@ -34,12 +34,30 @@ function Generator({ solverResult }) {
     setIsLoading(false);
   };
 
-  const options = ["breakfast", "dinner", "lunch", "snack", "entire day"];
+  const options = ["Breakfast", "Dinner", "Lunch", "Snack", "Entire day"];
 
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid #444",
+        borderRadius: "10px",
+        borderColor: "#7a00a8",
+        boxShadow: "0 0 10px #7a00a8",
+        padding: "20px",
+        margin: "20px",
+        backgroundColor: "#f0c9ff",
+      }}
+    >
       <h1>Course recommendator</h1>
-      <select value={selectedOption} onChange={handleOptionChange}>
+      <p>
+        Using GPT-3.5, generate a meal / meal-plan for the selected course or
+        the entire day.
+      </p>
+      <select
+        value={selectedOption}
+        onChange={handleOptionChange}
+        className="button-4"
+      >
         <option value="">Select an option</option>
         {options.map((option) => (
           <option key={option} value={option}>
@@ -47,26 +65,65 @@ function Generator({ solverResult }) {
           </option>
         ))}
       </select>
-      <button className="button-4" onClick={handleGenerateClick}>
+      <button
+        className="button-4-purple button-4"
+        onClick={handleGenerateClick}
+      >
         Generate
       </button>
       {isLoading && <p>Loading...</p>}
-      {parsedRecipe && (
+      {parsedRecipe && parsedRecipe.meal_plans ? (
         <div style={{ display: "flex" }}>
-          <div style={{ flex: 1 }}>
-            <h2>{parsedRecipe.recipes[0].name}</h2>
-            <p>{parsedRecipe.recipes[0].preparation}</p>
-          </div>
-          <div style={{ flex: 1 }}>
-            <h2>{parsedRecipe.recipes[1].name}</h2>
-            <p>{parsedRecipe.recipes[1].preparation}</p>
-          </div>
-          <div style={{ flex: 1 }}>
-            <h2>{parsedRecipe.recipes[2].name}</h2>
-            <p>{parsedRecipe.recipes[2].preparation}</p>
-          </div>
+          {parsedRecipe.meal_plans.map((mealPlan, index) => (
+            <div
+              key={mealPlan.name}
+              style={{
+                flex: 1,
+                margin: "0 10px",
+                borderRight:
+                  index !== parsedRecipe.meal_plans.length - 1 &&
+                  "1px solid black",
+              }}
+            >
+              <h2>{mealPlan.name}</h2>
+              <p>
+                <strong>Breakfast:</strong> {mealPlan.breakfast}
+              </p>
+              <p>
+                <strong>Lunch:</strong> {mealPlan.lunch}
+              </p>
+              <p>
+                <strong>Dinner:</strong> {mealPlan.dinner}
+              </p>
+              <p>
+                <strong>Snack:</strong> {mealPlan.snack}
+              </p>
+            </div>
+          ))}
         </div>
-      )}
+      ) : parsedRecipe && parsedRecipe.recipes ? (
+        <div style={{ display: "flex" }}>
+          {parsedRecipe.recipes.map((recipe, index) => (
+            <div
+              key={recipe.name}
+              style={{
+                flex: 1,
+                margin: "0 10px",
+                borderRight:
+                  index !== parsedRecipe.recipes.length - 1 &&
+                  "1px solid black",
+              }}
+            >
+              <h2>{recipe.name}</h2>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: recipe.preparation.replace(/\n/g, "<br>"),
+                }}
+              ></p>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

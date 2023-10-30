@@ -1,6 +1,13 @@
+@import "@font/nunito";
+
+.Plotly .main-svg text {
+  font-family: var(--fontFamily-nunito) !important;
+  font-weight: 500 !important;
+}
+
 * {
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 500;
+  font-family: var(--fontFamily-nunito);
+  font-weight: 400;
 }
 
 body {
@@ -10,44 +17,41 @@ body {
 }
 
 table {
-    border-collapse: collapse;
-    width: 100%;
-    font-family: Arial, sans-serif;
-    color: #333;
+  border-collapse: collapse;
+  width: 100%;
+  color: #333;
 }
 
 th, td {
-    padding: 1px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #e4e4e4;
-    font-weight: bold;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
+  padding: 1px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 tr:nth-child(even) {
-    background-color: #f8f8f8;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
-}
-
-tr:nth-child(even) {
-    background-color: #f8f8f8;
+  background-color: #f8f8f8;
 }
 
 tr.total-row {
-    background-color: lightgreen;
+  background-color: lightgreen;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+th {
+  font-style: italic;
+  font-weight: 700;
+  background-color: #818181;
+  color: #fff;
+  padding: 1px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .button-4 {
+  font-family: var(--fontFamily-nunito);
   appearance: none;
   background-color: #FAFBFC;
   border: 1px solid rgba(27, 31, 35, 0.15);
@@ -57,7 +61,6 @@ tr.total-row {
   color: #24292E;
   cursor: pointer;
   display: inline-block;
-  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -78,6 +81,18 @@ tr.total-row {
   background-color: #2EA44F;
   border: 1px solid rgba(27, 31, 35, 0.15);
   color: #FFFFFF;
+}
+
+.button-4-lightblue {
+  background-color: #64adff;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  color: #FFFFFF;
+}
+
+.button-4-lightblue:hover {
+  background-color: #1d86ff;
+  text-decoration: none;
+  transition-duration: 0.1s;
 }
 
 .button-4-lightgreen:hover {
@@ -127,6 +142,33 @@ tr.total-row {
 
 .button-4:-webkit-details-marker {
   display: none;
+}
+
+.button-4-purple {
+  background-color: #6f42c1;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  color: #FFFFFF;
+}
+
+.button-4-purple:hover {
+  background-color: #5a32b5;
+  text-decoration: none;
+  transition-duration: 0.1s;
+  color: #000000;
+}
+
+/* same for dark green */
+.button-4-darkgreen {
+  background-color: #22863a;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  color: #FFFFFF;
+}
+
+.button-4-darkgreen:hover {
+  background-color: #1e7e34;
+  text-decoration: none;
+  transition-duration: 0.1s;
+  color: #000000;
 }
 
 

@@ -12,7 +12,15 @@ const FoodTable = ({
   };
 
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid #444",
+        borderRadius: "10px",
+        padding: "20px",
+        margin: "20px",
+        backgroundColor: "#eee",
+      }}
+    >
       <table className="table">
         <thead>
           <tr>

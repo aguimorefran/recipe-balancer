@@ -108,12 +108,11 @@ async def solve_problem(data: dict):
 @app.post("/generate_recipe")
 async def generate_recipe(data: dict):
     foods = data["foods"]
-    course = data["course"]
+    course = data["course"].lower()
     names = [food["name"] for food in foods]
-    grams = [food["grams"] for food in foods]
     foods_string = ""
     for i in range(len(names)):
-        foods_string += f"{names[i]} ({grams[i]} grams) "
+        foods_string += f"{names[i]}"
 
     openai.api_key = OPENAI_KEY
 
@@ -121,7 +120,7 @@ async def generate_recipe(data: dict):
         system_prompt = f"""
         You are a cook in a restaurant. You are skilled at creating recipes with the existing ingredients."""
         user_prompt = f"""
-        Create three possible recipes for {course} using the following ingredients: {foods_string}.
+        Create three possible recipes for {course} using JUST the following ingredients, and dont add others: {foods_string}.
         Give an overall description of how to prepare it. You MUST return a JSON format response like:
         {{
             "recipes": [
@@ -139,12 +138,46 @@ async def generate_recipe(data: dict):
                 }}
             ]
         }}
+        Add HTML tags to the response to format it.
         """
-    else:
-        None
+    elif course == "entire day":
+        system_prompt = f"""
+        You are a cook in a restaurant. You are skilled at creating recipes with the existing ingredients."""
+        user_prompt = f"""
+        Create a full meal plan for an entire day using JUST the following ingredients, and dont add others: {foods_string}.
+
+        You MUST return a JSON format response like:
+        {{
+            "meal_plans": [
+                {{
+                    "name": "Meal plan 1",
+                    "breakfast": "Meal description",
+                    "lunch": "Meal description",
+                    "dinner": "Meal description",
+                    "snack": "Meal description"
+                }},
+                {{
+                    "name": "Meal plan 2",
+                    "breakfast": "Meal description",
+                    "lunch": "Meal description",
+                    "dinner": "Meal description",
+                    "snack": "Meal description"
+                }},
+                {{
+                    "name": "Meal plan 3",
+                    "breakfast": "Meal description",
+                    "lunch": "Meal description",
+                    "dinner": "Meal description",
+                    "snack": "Meal description"
+                }}
+            ]
+        }}
+
+        I repeat, dont add other ingredients. Add HTML tags to the response to format it. Use the exact names of the ingredients.
+        """
 
     completion = openai.Completion.create(
-        engine="text-davinci-003",
+        engine="gpt-3.5-turbo-instruct",
         prompt=f"{system_prompt}\n{user_prompt}",
         max_tokens=2048,
         n=1,

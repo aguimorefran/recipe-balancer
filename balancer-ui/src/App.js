@@ -7,6 +7,7 @@ import PieChart from "./Piechart";
 import Sliders from "./Sliders";
 import "./styles.css";
 import config from "./config.js";
+import WebFont from "webfontloader";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,6 +21,12 @@ function App() {
   const [maxKcals, setMaxKcals] = useState(500);
   const [showAddFoodPage, setShowAddFoodPage] = useState(false);
   const [addFoodButtonText, setAddFoodButtonText] = useState("Add food");
+
+  WebFont.load({
+    google: {
+      families: ["Roboto", "sans-serif"],
+    },
+  });
 
   const handleSelectFood = (food) => {
     const req_url = config.getRequestUrl();
@@ -67,29 +74,43 @@ function App() {
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <img src={require("./logo.png")} width="100" height="100" />
-        <div style={{ marginLeft: "10px", fontSize: "30px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <a href={window.location.href}>
+          <img src={require("./logo.png")} width="100" height="100" />
+        </a>{" "}
+        <div style={{ marginTop: "10px", fontSize: "30px" }}>
           Recipe Balancer
         </div>
+        <input
+          type="text"
+          className="textbox-4 textbox-4-main"
+          placeholder="Search for food"
+          onChange={(event) => setSearchTerm(event.target.value)}
+          onKeyPress={(event) => {
+            if (event.key === "Enter") {
+              handleSearch();
+            }
+          }}
+        />
+        <div style={{ marginTop: "10px" }}>
+          <button className="button-4" onClick={handleSearch}>
+            Search
+          </button>
+          <button
+            className="button-4-darkgreen button-4"
+            onClick={handleAddFoodClick}
+          >
+            {addFoodButtonText}
+          </button>
+        </div>
       </div>
-      <input
-        type="text"
-        className="textbox-4 textbox-4-main"
-        placeholder="Search for food"
-        onChange={(event) => setSearchTerm(event.target.value)}
-        onKeyPress={(event) => {
-          if (event.key === "Enter") {
-            handleSearch();
-          }
-        }}
-      />
-      <button className="button-4" onClick={handleSearch}>
-        Search
-      </button>
-      <button className="button-4" onClick={handleAddFoodClick}>
-        {addFoodButtonText}
-      </button>{" "}
+
       {showAddFoodPage && <AddFoodPage />}
       <FoodTable
         foods={foods}

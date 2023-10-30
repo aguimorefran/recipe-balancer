@@ -37,7 +37,15 @@ function SelectedFoodsTable({
   return (
     <>
       {selectedFoods.length > 0 && (
-        <div>
+        <div
+          style={{
+            border: "1px solid #444",
+            borderRadius: "10px",
+            padding: "20px",
+            margin: "20px",
+            backgroundColor: "#eee",
+          }}
+        >
           <h2>Selected foods: {selectedFoods.length}</h2>
           <table>
             <thead>

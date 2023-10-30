@@ -91,7 +91,9 @@ function Results({ result_data }) {
                 </tr>
               ))}
               <tr className="total-row">
-                <td>Total</td>
+                <td>
+                  <b>Total</b>
+                </td>
                 <td>{total.grams.toFixed(2)}</td>
                 <td>{total.cals.toFixed(2)}</td>
                 <td>{total.fat_grams.toFixed(2)}</td>

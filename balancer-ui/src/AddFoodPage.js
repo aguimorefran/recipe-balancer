@@ -49,7 +49,8 @@ function AddFoodPage() {
         borderRadius: "10px",
         padding: "20px",
         margin: "20px",
-        backgroundColor: "#eee",
+        backgroundColor: "#d3ffbf",
+        boxShadow: "0 0 10px #1a5200",
       }}
     >
       <h2>Add Food</h2>
@@ -93,7 +94,7 @@ function AddFoodPage() {
             />
           </div>
         </div>
-        <button className="button-4" onClick={handleAddFood}>
+        <button className="button-4-darkgreen button-4" onClick={handleAddFood}>
           Add Food
         </button>
         {error !== null && (

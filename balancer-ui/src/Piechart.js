@@ -23,6 +23,9 @@ function PieChart({ data }) {
         height: 300,
         title: title,
         paper_bgcolor: "rgba(0,0,0,0)",
+        font: {
+          family: "Nunito",
+        },
       }}
     />
   );
