@@ -43,103 +43,112 @@ function AddFoodPage() {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid #444",
+        borderRadius: "10px",
+        padding: "20px",
+        margin: "20px",
+        backgroundColor: "#eee",
+      }}
+    >
       <h2>Add Food</h2>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div style={{ minWidth: "200px" }}>
-          <label htmlFor="url">URL:</label>
-          <br />
-          <label htmlFor="category">Category:</label>
-          <br />
-          <label htmlFor="subcategory">Subcategory:</label>
+
+      <div>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ minWidth: "200px" }}>
+            <label htmlFor="url">URL:</label>
+            <br />
+            <label htmlFor="category">Category:</label>
+            <br />
+            <label htmlFor="subcategory">Subcategory:</label>
+          </div>
+          <div style={{ flex: 1 }}>
+            {" "}
+            <input
+              type="text"
+              id="url"
+              name="url"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              className="textbox-4"
+            />
+            <br />
+            <input
+              type="text"
+              id="category"
+              name="category"
+              className="textbox-4"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            />
+            <br />
+            <input
+              type="text"
+              id="subcategory"
+              name="subcategory"
+              value={subcategory}
+              className="textbox-4"
+              onChange={(event) => setSubcategory(event.target.value)}
+            />
+          </div>
         </div>
-        <div style={{ flex: 1 }}>
-          {" "}
-          <input
-            type="text"
-            id="url"
-            name="url"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            className="textbox-4"
-          />
-          <br />
-          <input
-            type="text"
-            id="category"
-            name="category"
-            className="textbox-4"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          />
-          <br />
-          <input
-            type="text"
-            id="subcategory"
-            name="subcategory"
-            value={subcategory}
-            className="textbox-4"
-            onChange={(event) => setSubcategory(event.target.value)}
-          />
-        </div>
+        <button className="button-4" onClick={handleAddFood}>
+          Add Food
+        </button>
+        {error !== null && (
+          <div
+            style={{
+              backgroundColor: "red",
+              color: "white",
+              padding: "10px",
+              marginTop: "10px",
+            }}
+          >
+            {error}
+          </div>
+        )}
+        {success && (
+          <div
+            style={{
+              backgroundColor: "green",
+              color: "white",
+              padding: "10px",
+              marginTop: "10px",
+            }}
+          >
+            OK
+          </div>
+        )}
+        {food !== null && (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Brand</th>
+                <th>Kcals/g</th>
+                <th>Fat/g</th>
+                <th>Carbs/g</th>
+                <th>Prot/g</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{food.name}</td>
+                <td>{food.category}</td>
+                <td>{food.subcategory}</td>
+                <td>{food.brand}</td>
+                <td>{food.cals_per_g.toFixed(2)}</td>
+                <td>{food.fat_per_g.toFixed(2)}</td>
+                <td>{food.carb_per_g.toFixed(2)}</td>
+                <td>{food.prot_per_g.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        )}
       </div>
-      <div></div>
-      <div></div>
-      <button className="button-4" onClick={handleAddFood}>
-        Add Food
-      </button>
-      {error !== null && (
-        <div
-          style={{
-            backgroundColor: "red",
-            color: "white",
-            padding: "10px",
-            marginTop: "10px",
-          }}
-        >
-          {error}
-        </div>
-      )}
-      {success && (
-        <div
-          style={{
-            backgroundColor: "green",
-            color: "white",
-            padding: "10px",
-            marginTop: "10px",
-          }}
-        >
-          OK
-        </div>
-      )}
-      {food !== null && (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Subcategory</th>
-              <th>Brand</th>
-              <th>Kcals/g</th>
-              <th>Fat/g</th>
-              <th>Carbs/g</th>
-              <th>Prot/g</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{food.name}</td>
-              <td>{food.category}</td>
-              <td>{food.subcategory}</td>
-              <td>{food.brand}</td>
-              <td>{food.cals_per_g.toFixed(2)}</td>
-              <td>{food.fat_per_g.toFixed(2)}</td>
-              <td>{food.carb_per_g.toFixed(2)}</td>
-              <td>{food.prot_per_g.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
-      )}
     </div>
   );
 }
