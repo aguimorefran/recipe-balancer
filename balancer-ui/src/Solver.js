@@ -41,7 +41,7 @@ function Solver({
 
   return (
     <div>
-      <h1>Results</h1>
+      <h1>Solver</h1>
       <button className="button-4" onClick={handleSolveClick}>
         Calculate
       </button>

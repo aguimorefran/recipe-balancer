@@ -19,7 +19,6 @@ function Sliders(props) {
 
   return (
     <div>
-      <h1>Balance configuration</h1>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ minWidth: "300px" }}>
           <label htmlFor="minPrtoPctg">Minimum protein percentage:</label>

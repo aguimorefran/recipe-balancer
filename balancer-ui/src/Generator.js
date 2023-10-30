@@ -38,7 +38,7 @@ function Generator({ solverResult }) {
 
   return (
     <div>
-      <h1>Course generator</h1>
+      <h1>Course recommendator</h1>
       <select value={selectedOption} onChange={handleOptionChange}>
         <option value="">Select an option</option>
         {options.map((option) => (

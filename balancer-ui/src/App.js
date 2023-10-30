@@ -102,9 +102,26 @@ function App() {
         onRemoveFood={handleRemoveFood}
         onUpdateSelectedFoods={handleUpdateSelectedFoods}
       />
-      <div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ flex: 1 }}>
+      <div
+        style={{
+          border: "1px solid #444",
+          borderRadius: "10px",
+          padding: "20px",
+          margin: "20px",
+          backgroundColor: "#eee",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "left",
+          }}
+        >
+          <h1 style={{ margin: "0" }}>Target macros</h1>
+        </div>
+        <div style={{ display: "flex" }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
             <Sliders
               minPrtoPctg={minPrtoPctg}
               maxFatPctg={maxFatPctg}

@@ -22,6 +22,7 @@ function PieChart({ data }) {
         width: 300,
         height: 300,
         title: title,
+        paper_bgcolor: "rgba(0,0,0,0)",
       }}
     />
   );
