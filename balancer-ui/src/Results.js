@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PieChart from "./Piechart";
 import html2canvas from "html2canvas";
-import Recommendator from "./Recommendator";
 
 function Results({ result_data }) {
   const [foodResults, setFoodResults] = useState([]);
@@ -129,7 +128,6 @@ function Results({ result_data }) {
           />
         </div>
       </div>
-      <Recommendator foodResults={foodResults} />
     </div>
   );
 }

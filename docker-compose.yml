@@ -45,5 +45,6 @@ services:
     environment:
       - DOCKER_APP="true"
       - CHOKIDAR_USEPOLLING= "true"
+      - HOST=0.0.0.0
     depends_on:
       - balancer

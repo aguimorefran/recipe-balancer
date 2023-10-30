@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Results from "./Results";
 import config from "./config.js";
+import Generator from "./Generator";
 
 function Solver({
   selectedFoods,
@@ -45,7 +46,10 @@ function Solver({
         Calculate
       </button>
       {solverResult && Object.keys(solverResult).length !== 0 && (
-        <Results result_data={solverResult} />
+        <div>
+          <Results result_data={solverResult} />
+          <Generator solverResult={solverResult} />
+        </div>
       )}
     </div>
   );
