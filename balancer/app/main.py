@@ -9,6 +9,8 @@ from harvest import harvest_url as harvest
 from balancer import solve_problem as solve
 from db import create_conn, fetch_food, inc_selection
 
+from keys import OPENAI_KEY
+
 conn = create_conn()
 
 app = FastAPI()
@@ -106,12 +108,52 @@ async def solve_problem(data: dict):
 @app.post("/generate_recipe")
 async def generate_recipe(data: dict):
     foods = data["foods"]
-    print(foods)
+    course = data["course"]
     names = [food["name"] for food in foods]
     grams = [food["grams"] for food in foods]
     foods_string = ""
     for i in range(len(names)):
-        foods_string += f"{names[i]} ({grams[i]} grams)\n"
+        foods_string += f"{names[i]} ({grams[i]} grams) "
 
-    print(foods_string)
-    return {"result": foods_string}
+    openai.api_key = OPENAI_KEY
+
+    if course != "entire day":
+        system_prompt = f"""
+        You are a cook in a restaurant. You are skilled at creating recipes with the existing ingredients."""
+        user_prompt = f"""
+        Create three possible recipes for {course} using the following ingredients: {foods_string}.
+        Give an overall description of how to prepare it. You MUST return a JSON format response like:
+        {{
+            "recipes": [
+                {{
+                    "name": "Recipe Name",
+                    "preparation": "Recipe preparation"
+                }},
+                {{
+                    "name": "Recipe Name",
+                    "preparation": "Recipe preparation"
+                }},
+                {{
+                    "name": "Recipe Name",
+                    "preparation": "Recipe preparation"
+                }}
+            ]
+        }}
+        """
+    else:
+        None
+
+    completion = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"{system_prompt}\n{user_prompt}",
+        max_tokens=2048,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+
+    response = completion.choices[0].text
+
+    print(response)
+
+    return {"result": response}
