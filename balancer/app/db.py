@@ -20,9 +20,6 @@ FOOD_COLS = [
     ("times_selected", "INTEGER"),
 ]
 
-# Save a meal which is a list of foods with their quantities
-# Each meal has foods with their quantities, and total results
-
 FOOD_MEAL_COLS = [
     ("id", "SERIAL PRIMARY KEY"),
     ("food_id", "INTEGER"),
@@ -128,7 +125,7 @@ def food_exists(conn, url, verbose=False):
     return None
 
 
-def insert_food(conn, food_dict, verbose=False):
+def insert_food(conn, food_dict, verbose=False, manual=False):
     try:
         cur = conn.cursor()
         values = []
@@ -173,4 +170,4 @@ def insert_food(conn, food_dict, verbose=False):
         cur.close()
         return True
     except Exception as e:
-        return False
+        return e
