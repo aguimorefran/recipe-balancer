@@ -1,7 +1,7 @@
 import os
 
 import psycopg2
-from config import DB_HOST, DB_PASSWORD, DB_PORT, DB_USER, DB_RESET
+from config import DB_HOST, DB_PASSWORD, DB_PORT, DB_RESET, DB_USER
 from unidecode import unidecode
 
 FOOD_COLS = [

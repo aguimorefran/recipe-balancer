@@ -1,16 +1,15 @@
 import json
 from typing import Dict, List
-import openai
-from unidecode import unidecode
 
+import openai
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from harvest import harvest_url as harvest
+from keys import OPENAI_KEY
+from unidecode import unidecode
 
 from balancer import solve_problem as solve
 from db import create_conn, fetch_food, inc_selection, insert_food
-
-from keys import OPENAI_KEY
 
 KCALS_GRAM_FAT = 9
 KCALS_GRAM_CARBS = 4
