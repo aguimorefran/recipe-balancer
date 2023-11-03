@@ -20,26 +20,58 @@ FOOD_COLS = [
     ("times_selected", "INTEGER"),
 ]
 
+# Save a meal which is a list of foods with their quantities
+# Each meal has foods with their quantities, and total results
+
+FOOD_MEAL_COLS = [
+    ("id", "SERIAL PRIMARY KEY"),
+    ("food_id", "INTEGER"),
+    ("grams", "REAL"),
+    ("meal_id", "INTEGER"),
+]
+
+MEAL_COLS = [
+    ("id", "SERIAL PRIMARY KEY"),
+    ("name", "TEXT"),
+    ("description", "TEXT"),
+    ("cals", "REAL"),
+    ("fat_pct", "REAL"),
+    ("carb_pct", "REAL"),
+    ("prot_pct", "REAL"),
+    ("fat_grams", "REAL"),
+    ("carb_grams", "REAL"),
+    ("prot_grams", "REAL"),
+    ("date_created", "TIMESTAMP"),
+]
+
 
 def init_tables(conn):
     cur = conn.cursor()
     print("DB_RESET:", DB_RESET)
+    tables = ["foods", "meals", "food_meals"]
+    columns = [FOOD_COLS, MEAL_COLS, FOOD_MEAL_COLS]
+
     if DB_RESET == "true":
         print("Resetting database...")
-        cur.execute("DROP TABLE IF EXISTS foods")
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS foods ("
-        + ",".join([f"{col} {dtype}" for col, dtype in FOOD_COLS])
-        + ")"
-    )
-    cur.execute(
-        "SELECT EXISTS ("
-        "SELECT FROM information_schema.tables "
-        "WHERE table_schema = 'public' "
-        "AND table_name = 'foods'"
-        ")"
-    )
-    conn.commit()
+        for table in tables:
+            cur.execute(f"DROP TABLE IF EXISTS {table}")
+
+    for table, cols in zip(tables, columns):
+        cur.execute(
+            f"CREATE TABLE IF NOT EXISTS {table} ("
+            + ",".join([f"{col} {dtype}" for col, dtype in cols])
+            + ")"
+        )
+
+    for table in tables:
+        cur.execute(
+            "SELECT EXISTS ("
+            "SELECT FROM information_schema.tables "
+            f"WHERE table_schema = 'public' AND table_name = '{table}'"
+            ")"
+        )
+        conn.commit()
+
     cur.close()
 
 

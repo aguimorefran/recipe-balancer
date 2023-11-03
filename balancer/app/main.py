@@ -173,7 +173,7 @@ async def generate_recipe(data: dict):
             ]
         }}
 
-        I repeat, dont add other ingredients. Add HTML tags to the response to format it. Use the exact names of the ingredients.
+        I repeat, dont add other ingredients. Use the exact names of the ingredients.
         """
 
     completion = openai.Completion.create(
@@ -186,7 +186,5 @@ async def generate_recipe(data: dict):
     )
 
     response = completion.choices[0].text
-
-    print(response)
 
     return {"result": response}

@@ -42,9 +42,7 @@ services:
       - "3000:3000"
     volumes:
       - ./balancer-ui:/app
-    environment:
-      - DOCKER_APP="true"
-      - CHOKIDAR_USEPOLLING= "true"
-      - HOST=0.0.0.0
     depends_on:
       - balancer
+    environment:
+      - REACT_APP_DOCKER_APP=true
