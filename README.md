@@ -62,3 +62,22 @@ You also have a Save button to download a snapshot of the results in a image.
 ### 6. Recipe recommendator with GPT
 
 If you have an OpenAI API key, you can use the recipe recommendator. This will generate a recipe based on the foods you have in your database and the goals you have set. You can also set the number of recipes you want to generate.
+
+---
+
+## How to run it
+
+#### Backend
+
+Run `uvicorn main:app --reload` in the `balancer` folder.
+
+#### Frontend
+Run `npm start` in the `balancer-ui` folder.
+
+#### DB
+
+Run `docker-compose up db` in the root folder.
+
+## How to deploy it
+
+Just run `docker compose up` in the root folder. Enjoy!
