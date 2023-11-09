@@ -5,7 +5,7 @@ import openai
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from harvest import harvest_url as harvest
-from keys import OPENAI_KEY
+# from keys import OPENAI_KEY
 from unidecode import unidecode
 
 from balancer import solve_problem as solve
@@ -15,7 +15,7 @@ KCALS_GRAM_FAT = 9
 KCALS_GRAM_CARBS = 4
 KCALS_GRAM_PROTEIN = 4
 
-conn = create_conn()
+create_conn()
 
 app = FastAPI()
 
@@ -34,7 +34,7 @@ def search_food(name: str = None):
     Searches for foods in the database that match the given name or brand.
     If name is None, returns all the foods in the database.
     """
-    fetched_foods = fetch_food(conn, name)
+    fetched_foods = fetch_food(name)
     response = Response()
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
@@ -49,7 +49,7 @@ def increment_selections(food_id: int):
     Increments the number of times the food has been selected.
     """
     try:
-        result = inc_selection(conn, food_id)
+        result = inc_selection(food_id)
         response = Response()
     except Exception as e:
         response = Response(status_code=500)
@@ -67,7 +67,7 @@ def harvest_url(url: str, category: str, subcategory: str):
     Harvests a food from the given url.
     """
     try:
-        result = harvest(conn, url, category, subcategory, True)
+        result = harvest(url, category, subcategory, True)
         response = Response()
     except Exception as e:
         response = Response(status_code=500)
@@ -111,6 +111,7 @@ async def solve_problem(data: dict):
 
 @app.post("/generate_recipe")
 async def generate_recipe(data: dict):
+    return {"result": "Not implemented yet."}
     foods = data["foods"]
     course = data["course"].lower()
     names = [food["name"] for food in foods]
@@ -231,7 +232,6 @@ async def insert_food_manual(data: dict):
 
     try:
         result = insert_food(
-            conn,
             {
                 "name": name,
                 "brand": brand,

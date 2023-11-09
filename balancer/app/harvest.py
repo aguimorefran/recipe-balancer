@@ -1,5 +1,6 @@
 import json
 import time
+import sqlite3
 
 import requests
 from bs4 import BeautifulSoup
@@ -145,10 +146,10 @@ def __fetch_metadata(food_dict, verbose=False, mode=None):
     return result
 
 
-def harvest_url(conn, url, cat, subcat, verbose):
+def harvest_url(url, cat, subcat, verbose):
     if verbose:
         print(f"Harvesting from {url}")
-    if food_exists(conn, url, verbose):
+    if food_exists(url, verbose):
         raise Exception(f"Food {url} already in database.")
     food_dict = {
         "item_url": url,
@@ -168,7 +169,7 @@ def harvest_url(conn, url, cat, subcat, verbose):
         raise Exception(f"Food {url} is not 100g.")
     food_dict["serving_size"] = 0
     food_dict["times_selected"] = 0
-    insert_food(conn, food_dict, verbose)
-    if food_exists(conn, url, verbose) is None:
+    insert_food(food_dict, verbose)
+    if food_exists(url, verbose) is None:
         raise Exception(f"Error inserting {url} into database.")
-    return food_exists(conn, url, verbose)
+    return food_exists(url, verbose)
