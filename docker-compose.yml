@@ -1,17 +1,6 @@
 version: "3.8"
 
 services:
-  db:
-    image: postgres
-    container_name: db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./db/data:/var/lib/postgresql/data
 
   balancer:
     container_name: balancer
@@ -30,8 +19,6 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_RESET=false
-    depends_on:
-      - db
 
   front:
     container_name: front
